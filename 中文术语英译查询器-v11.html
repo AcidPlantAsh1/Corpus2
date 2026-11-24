@@ -1,0 +1,2895 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>中英对照术语查询器</title>
+<style>
+/* SECTION: tokens */
+:root{
+  --bg:#f4f6f9; --card:#ffffff; --ink:#15202b; --mut:#5d6b7a; --line:#e2e7ee;
+  --acc:#1b4d8c; --acc-soft:#eaf1fa; --gold:#8a6d1f; --gold-soft:#fbf4dd;
+  --mark:#ffe9a8; --mark2:#c9e8d4; --shadow:0 1px 2px rgba(20,40,60,.06),0 8px 24px rgba(20,40,60,.06);
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+html[data-theme="dark"]{
+  --bg:#111820; --card:#182029; --ink:#e6edf4; --mut:#93a3b3; --line:#28323d;
+  --acc:#7db4f0; --acc-soft:#1e2c3c; --gold:#e0c169; --gold-soft:#2b2717;
+  --mark:#6a5615; --mark2:#20402f; --shadow:0 1px 2px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--ink); line-height:1.6;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  font-size:15px; -webkit-text-size-adjust:100%;
+}
+button,input,select,textarea{font:inherit;color:inherit}
+/* SECTION: header */
+.top{
+  position:sticky;top:0;z-index:20;background:var(--card);border-bottom:1px solid var(--line);
+  display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;padding:12px clamp(12px,3vw,26px);
+}
+.brand{display:flex;align-items:baseline;gap:10px;min-width:0;flex:1 1 auto}
+.brand h1{font-size:17px;margin:0;font-weight:700;letter-spacing:.2px;white-space:nowrap}
+.brand .sub{font-size:11.5px;color:var(--gold);line-height:1.45;white-space:normal;max-width:560px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.chip{
+  font-size:12px;color:var(--mut);background:var(--bg);border:1px solid var(--line);
+  border-radius:999px;padding:3px 10px;white-space:nowrap;
+}
+.chip b{color:var(--ink);font-weight:650;font-variant-numeric:tabular-nums}
+.iconbtn{
+  border:1px solid var(--line);background:var(--card);border-radius:9px;padding:6px 11px;
+  cursor:pointer;font-size:13px;min-height:34px;
+}
+.iconbtn:hover{border-color:var(--acc);color:var(--acc)}
+/* SECTION: layout */
+.layout{
+  display:flex;flex-direction:column;gap:14px;
+  padding:16px clamp(12px,3vw,26px) 70px;max-width:1080px;margin:0 auto;
+}
+.side{display:flex;flex-direction:column;gap:14px;min-width:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:14px;min-width:0}
+.card h2{font-size:13px;margin:0 0 10px;font-weight:700;letter-spacing:.4px;color:var(--mut);text-transform:uppercase;display:flex;align-items:center;gap:8px}
+.card h2 .n{margin-left:auto;font-weight:600;letter-spacing:0;text-transform:none;color:var(--acc)}
+/* SECTION: dropzone */
+.drop{
+  border:1.5px dashed var(--line);border-radius:12px;padding:16px 12px;text-align:center;cursor:pointer;
+  transition:.15s;background:var(--bg);
+}
+.drop:hover,.drop.hot{border-color:var(--acc);background:var(--acc-soft)}
+.drop .t1{font-weight:650;font-size:14px}
+.drop .t2{font-size:12px;color:var(--mut);margin-top:3px}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.btn{
+  border:1px solid var(--acc);background:var(--acc);color:#fff;border-radius:9px;padding:8px 13px;
+  cursor:pointer;font-size:13px;font-weight:600;min-height:36px;flex:0 1 auto;
+}
+html[data-theme="dark"] .btn{color:#0e1620}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.ghost{background:transparent;color:var(--acc);border-color:var(--line)}
+.btn.wide{flex:1 1 100%}
+.flist{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column;gap:6px;max-height:210px;overflow:auto}
+.flist li{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px;border:1px solid var(--line);border-radius:9px;padding:6px 8px;background:var(--bg)}
+.flist .nm{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.flist .ct{font-size:11px;color:var(--mut);white-space:nowrap}
+.flist .x{border:0;background:transparent;color:var(--mut);cursor:pointer;padding:0 3px;font-size:15px;line-height:1}
+.flist .x:hover{color:#c0392b}
+.flist .fhead{background:var(--acc-soft);border:1px solid var(--line);border-radius:9px;padding:6px 9px;font-size:12.5px;font-weight:650;cursor:pointer;gap:7px}
+.flist .fhead .fi{font-size:11px;color:var(--acc);width:12px;display:inline-block}
+.flist .fhead .fc{color:var(--mut);font-weight:400;font-size:11.5px}
+.flist li.indent{margin-left:16px}
+.flist .sel{border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink);font-size:11.5px;padding:2px 4px;max-width:92px;flex:0 0 auto}
+.warn{font-size:12px;color:var(--gold);background:var(--gold-soft);border-radius:8px;padding:7px 9px;margin-top:9px}
+.hint{font-size:12px;color:var(--mut);margin-top:9px;line-height:1.55}
+/* SECTION: search */
+.searchwrap{display:flex;gap:9px;flex-wrap:wrap}
+.searchwrap input[type=text]{
+  flex:1 1 220px;min-width:0;font-size:16px;padding:11px 13px;border:1px solid var(--line);
+  border-radius:11px;background:var(--bg);
+}
+.searchwrap input[type=text]:focus{outline:none;border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}
+.opts{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:12.5px;color:var(--mut);align-items:center}
+.opts label{display:flex;gap:5px;align-items:center;cursor:pointer}
+.recents{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.rtag{font-size:12px;border:1px solid var(--line);background:var(--bg);border-radius:999px;padding:3px 10px;cursor:pointer}
+.rtag:hover{border-color:var(--acc);color:var(--acc)}
+/* SECTION: summary */
+.sum{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;padding:12px 14px}
+.sum .big{font-size:14px;font-weight:650}
+.sum .big span{font-size:20px;color:var(--acc);font-variant-numeric:tabular-nums;margin-right:2px}
+.cands{border-top:1px dashed var(--line);margin-top:4px;padding-top:11px}
+.cands .lab{font-size:12px;color:var(--mut);margin-bottom:7px}
+.crow{display:flex;flex-wrap:wrap;gap:6px}
+.cand{
+  font-size:13px;border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:5px 10px;cursor:pointer;
+  display:flex;align-items:center;gap:6px;
+}
+.cand:hover{border-color:var(--acc)}
+.cand .df{font-size:11px;color:var(--mut);font-variant-numeric:tabular-nums}
+.cand.top{background:var(--acc-soft);border-color:var(--acc);font-weight:600}
+/* SECTION: results */
+.results{display:flex;flex-direction:column;gap:12px;min-width:0}
+.res{padding:0;overflow:hidden}
+.res .head{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;padding:10px 14px;background:var(--bg);border-bottom:1px solid var(--line);font-size:12px;color:var(--mut)}
+.res .src{font-weight:650;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+.res .loc{font-family:var(--mono);font-size:11px;white-space:nowrap}
+.res .hit{margin-left:auto;background:var(--mark);color:#3a2f00;border-radius:6px;padding:1px 7px;font-size:11px;font-weight:600;white-space:nowrap}
+html[data-theme="dark"] .res .hit{color:#f6f2e0}
+.pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0}
+@media (max-width:760px){.pair{grid-template-columns:minmax(0,1fr)}}
+.half{padding:12px 14px;min-width:0}
+.half.zh{border-right:1px solid var(--line)}
+@media (max-width:760px){.half.zh{border-right:0;border-bottom:1px solid var(--line)}}
+.half .tag{font-size:11px;letter-spacing:.5px;color:var(--mut);margin-bottom:5px;font-weight:650}
+html[data-theme="dark"] .mark-lg .lg i.en2{box-shadow:inset 0 -2px 0 rgba(120,220,170,.35)}
+/* SECTION: fold —— 折叠只靠 max-height 控制，不用 line-clamp（后者会无视 max-height 导致展开失效） */
+.half .txt{font-size:14px}
+.half .txt.clip{overflow:hidden;transition:max-height .2s ease}
+.half .txt.clip.fade{-webkit-mask-image:linear-gradient(#000 58%,transparent);mask-image:linear-gradient(#000 58%,transparent)}
+.half .txt.open{max-height:none;-webkit-mask-image:none}
+.en .txt{font-family:Georgia,"Times New Roman",serif;font-size:14.5px}
+mark{background:var(--mark);color:inherit;border-radius:3px;padding:0 1px;font-weight:600}
+mark.en2{background:var(--mark2);font-weight:600;box-shadow:inset 0 -2px 0 rgba(20,100,64,.3)}
+mark.mid{background:var(--mark);font-weight:600}
+mark.weak{background:transparent;border-bottom:2px dashed var(--gold);border-radius:0;padding:0 0 1px;font-weight:600;cursor:pointer}
+mark.weak:hover{background:var(--gold-soft)}
+/* SECTION: anchor nav */
+.nav{display:flex;flex-wrap:wrap;gap:6px;padding:8px clamp(12px,3vw,26px);background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:56px;z-index:19}
+.nav button{border:1px solid var(--line);background:var(--bg);border-radius:999px;padding:5px 12px;font-size:12.5px;cursor:pointer;min-height:32px}
+.nav button:hover{border-color:var(--acc);color:var(--acc)}
+.nav .st{margin-left:auto;font-size:12px;color:var(--mut);display:flex;align-items:center;gap:6px}
+.nav .st b{color:var(--acc);font-weight:650}
+.openbtn{border:1px solid var(--line);background:var(--card);color:var(--acc);border-radius:8px;padding:4px 10px;font-size:12px;cursor:pointer;white-space:nowrap}
+.openbtn:hover{background:var(--acc-soft)}
+.flist .openbtn{flex:0 0 auto;padding:2px 8px;font-size:11.5px;min-height:24px}
+.more{border:0;background:transparent;color:var(--acc);font-size:12px;cursor:pointer;padding:4px 0 0}
+.foot{display:flex;flex-wrap:wrap;gap:7px;padding:10px 14px;border-top:1px solid var(--line);align-items:center}
+.foot .sp{flex:1 1 auto}
+.saveline{display:flex;flex-wrap:wrap;gap:6px;padding:0 14px 12px;align-items:center;font-size:12.5px}
+.aihit{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:4px 9px;font-size:12.5px;display:inline-flex;gap:7px;align-items:center}
+.aihit b{font-weight:650}
+.aihit .none{color:var(--mut);font-style:italic}
+.bar{height:4px;background:var(--line);border-radius:99px;overflow:hidden;margin-top:10px;display:none}
+.bar.on{display:block}
+.bar i{display:block;height:100%;background:var(--acc);width:0;transition:width .25s}
+.empty{color:var(--mut);font-size:13.5px;padding:26px 14px;text-align:center}
+.spin{display:inline-block;width:13px;height:13px;border:2px solid var(--line);border-top-color:var(--acc);border-radius:50%;animation:sp .7s linear infinite;vertical-align:-2px}
+@keyframes sp{to{transform:rotate(360deg)}}
+/* SECTION: glossary */
+.gbox{max-height:300px;overflow:auto;display:flex;flex-direction:column;gap:7px;margin-top:4px}
+.gitem{border:1px solid var(--line);border-radius:9px;padding:7px 9px;background:var(--bg);font-size:13px}
+.gitem .g1{display:flex;flex-wrap:wrap;gap:6px;align-items:baseline}
+.gitem .gz{font-weight:650}
+.gitem .ge{color:var(--acc);font-family:Georgia,serif;flex:1 1 auto;min-width:0}
+.gitem .gx{border:0;background:transparent;color:var(--mut);cursor:pointer;font-size:14px;padding:0 2px}
+.gitem .gs{font-size:11px;color:var(--mut);margin-top:3px;overflow-wrap:anywhere}
+.gsearch{width:100%;padding:7px 10px;border:1px solid var(--line);border-radius:9px;background:var(--bg);font-size:13px;margin-bottom:8px}
+/* SECTION: modal */
+.mask{position:fixed;inset:0;background:rgba(10,18,26,.45);display:none;z-index:60;padding:16px;overflow:auto}
+.mask.on{display:block}
+.modal{max-width:620px;margin:6vh auto;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow)}
+.modal h3{margin:0 0 4px;font-size:16px}
+.fld{margin-top:13px}
+.fld label{display:block;font-size:12.5px;color:var(--mut);margin-bottom:5px;font-weight:600}
+.fld input,.fld select,.fld textarea{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:9px;background:var(--bg);font-size:13.5px}
+.fld textarea{min-height:96px;resize:vertical;font-family:var(--mono);font-size:12px}
+.fld .tip{font-size:11.5px;color:var(--mut);margin-top:4px;line-height:1.5}
+.mhead{display:flex;align-items:center;gap:10px}
+.mhead .x{margin-left:auto;border:0;background:transparent;font-size:20px;cursor:pointer;color:var(--mut);line-height:1;padding:2px 6px}
+.msg{font-size:12.5px;margin-top:10px;padding:8px 10px;border-radius:8px;display:none;white-space:pre-wrap;overflow-wrap:anywhere}
+.msg.on{display:block}
+.msg.ok{background:var(--mark2);color:#123f26}
+.msg.bad{background:#fde7e7;color:#8a1f1f}
+html[data-theme="dark"] .msg.ok{background:var(--mark2);color:#d6f0e0}
+html[data-theme="dark"] .msg.bad{background:#3a1d1d;color:#f3caca}
+.toast{
+  position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);opacity:0;
+  background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:999px;font-size:13px;
+  transition:.25s;z-index:90;pointer-events:none;max-width:88vw;
+}
+.toast.on{opacity:1;transform:translateX(-50%)}
+[hidden]{display:none!important}
+.known{font-size:11px;letter-spacing:.5px;color:var(--mut);font-weight:650;margin-bottom:7px}
+/* SECTION: order-badge */
+.num{display:inline-flex;width:19px;height:19px;border-radius:50%;background:var(--acc);color:#fff;font-size:11px;align-items:center;justify-content:center;font-weight:700;flex:0 0 auto}
+html[data-theme="dark"] .num{color:#101820}
+.mark-lg{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--mut);padding:11px 14px;border-bottom:1px solid var(--line);align-items:center;background:var(--bg)}
+.mark-lg .lg{display:inline-flex;gap:5px;align-items:center}
+.mark-lg .lg i{width:15px;height:11px;border-radius:3px;display:inline-block}
+.mark-lg .lg i.en2{background:var(--mark2)}
+.mark-lg .lg i.mid{background:var(--mark)}
+.mark-lg .lg i.weak{background:transparent;border-bottom:2px dashed var(--gold);height:10px}
+/* SECTION: local-badge & gloss-panel */
+.badge{border:1px solid var(--line);border-radius:999px;padding:1px 8px;font-size:11px;cursor:pointer;white-space:nowrap;background:var(--bg);color:var(--mut);flex:0 0 auto}
+.badge.local{border-color:var(--gold);color:var(--gold);background:var(--gold-soft);font-weight:600}
+.gp-note{font-size:12.5px;color:var(--mut)}
+.gphit{border:1px solid var(--line);border-radius:10px;padding:9px 11px;background:var(--bg);margin-top:8px}
+.gphit .gh{display:flex;flex-wrap:wrap;gap:8px;align-items:baseline}
+.gphit .gz{font-weight:700}
+.gphit .ge{color:var(--acc);font-family:Georgia,"Times New Roman",serif}
+.gphit .gp{padding:0 2px}
+.gphit .pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;margin-top:8px}
+@media(max-width:760px){.gphit .pair{grid-template-columns:minmax(0,1fr)}}
+.gphit .pair .cell{font-size:12.8px;line-height:1.62;min-width:0}
+.gphit .pair .l2{font-size:10.5px;color:var(--mut);margin-bottom:2px;letter-spacing:.3px}
+.recents .rtag{position:relative;padding-right:24px}
+.recents .rtag .rdel{position:absolute;right:4px;top:50%;transform:translateY(-50%);border:0;background:transparent;color:var(--mut);cursor:pointer;font-size:12px;line-height:1;padding:2px}
+.recents .rtag .rdel:hover{color:#c0392b}
+/* SECTION: verdict */
+.verdict{border-left:3px solid var(--acc)}
+.vhead{font-size:12px;color:var(--mut);letter-spacing:.5px;font-weight:650;margin-bottom:8px}
+.vmain{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:baseline}
+.vterm{font-size:21px;font-weight:700;color:var(--acc);font-family:Georgia,"Times New Roman",serif;line-height:1.35;overflow-wrap:anywhere}
+.vmeta{font-size:12.5px;color:var(--mut);white-space:nowrap}
+.valt{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.vbar{display:flex;height:7px;border-radius:99px;overflow:hidden;background:var(--line);margin-top:11px}
+.vbar i{display:block;height:100%;min-width:2px}
+.vnote{font-size:12px;color:var(--mut);margin-top:9px;line-height:1.55;overflow-wrap:anywhere}
+/* SECTION: align panel */
+.ta{width:100%;min-height:74px;padding:9px 11px;border:1px solid var(--line);border-radius:10px;background:var(--bg);font-size:13px;resize:vertical;line-height:1.55}
+.ta:focus{outline:none;border-color:var(--acc)}
+.ta.hot{border-color:var(--acc);background:var(--acc-soft)}
+.lbl{font-size:12px;color:var(--mut);font-weight:650;margin:10px 0 5px}
+.urlrow{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.urlrow input{flex:1 1 150px;min-width:0;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:var(--bg);font-size:12.5px}
+.astat{font-size:12.5px;color:var(--mut);margin-top:9px;line-height:1.6;overflow-wrap:anywhere}
+.astat b{color:var(--ink)}
+kbd{font-family:var(--mono);font-size:11px;border:1px solid var(--line);border-radius:4px;padding:0 4px;background:var(--bg)}
+</style>
+</head>
+<body>
+
+<!-- SECTION: header -->
+<header class="top">
+  <div class="brand">
+    <h1>中英对照术语查询器</h1>
+    <span class="sub">查询是基于词频的概率推断，并非基于语义的精准对应，请结合原文谨慎使用。</span>
+  </div>
+  <div class="chips">
+    <span class="chip">文件 <b id="cFiles">0</b></span>
+    <span class="chip">对照单元 <b id="cUnits">0</b></span>
+    <span class="chip">术语库 <b id="cGloss">0</b></span>
+    <button class="iconbtn" id="btnSettings" type="button">设置</button>
+    <button class="iconbtn" id="btnTheme" type="button">主题</button>
+  </div>
+</header>
+
+<nav class="nav">
+  <button type="button" data-goto="card-gloss">术语库</button>
+  <button type="button" data-goto="card-search">查询</button>
+  <button type="button" data-goto="card-files">语料文件</button>
+  <button type="button" data-goto="card-align">无格式中英素材</button>
+  <span class="st" id="dbState">本地库：检查中…</span>
+</nav>
+
+<div class="layout">
+  <!-- SECTION: sidebar -->
+    <section class="card c-gloss" id="card-gloss">
+      <h2>本地术语库<span class="n" id="gCount">0 条</span></h2>
+      <div class="row" style="margin-top:0">
+        <button class="btn" id="btnOpenGloss" type="button">打开术语库</button>
+      </div>
+      <div class="hint" id="gTip">查询时会先在这里匹配。词条清单、导出与清空都在新标签页里进行。</div>
+    </section>
+
+  <section class="card c-search" id="card-search">
+      <h2>查询<span class="n" id="modeTag">本地检索</span></h2>
+      <div class="searchwrap">
+        <input type="text" id="q" placeholder="输入中文词或短语，如：定心丸 / 新安全格局 / 全球治理倡议" autocomplete="off">
+        <button class="btn" id="btnSearch" type="button">查询</button>
+      </div>
+      <div class="opts">
+        <label><input type="checkbox" id="optMulti" checked> 按词组合匹配（逗号/空格分多词）</label>
+        <label><input type="checkbox" id="optWhole" checked> 只显示含该词的段落块</label>
+        <label><input type="checkbox" id="optAI" checked> 结果里显示 AI 抽取入口</label>
+        <label><input type="checkbox" id="optAuto"> <b>自动使用联网AI辅助查询</b></label>
+        <span>用 <kbd>Enter</kbd> 查询，多个词用逗号分隔可同时查</span>
+      </div>
+      <div class="recents" id="recents"></div>
+      <div class="row" id="recentTools" style="margin-top:6px" hidden>
+        <button class="iconbtn" id="btnClrRecent" type="button">清空查询记录</button>
+      </div>
+      <div class="bar" id="bar"><i></i></div>
+    </section>
+
+<section class="card" id="glossHits" hidden></section>
+
+    <section class="card verdict c-verdict" id="verdict" hidden>
+      <div class="vhead">本次查询的判定译法</div>
+      <div class="vmain"><div class="vterm" id="vTerm">—</div><div class="vmeta" id="vMeta"></div></div>
+      <div class="vbar" id="vBar" hidden></div>
+      <div class="valt" id="vAlt"></div>
+      <div class="vnote" id="vNote"></div>
+      <div class="row"><button class="btn" id="btnVSave" type="button">存入术语库</button><button class="btn ghost" id="btnVCopy" type="button">复制全部依据</button></div>
+    </section>
+
+    <section class="card sum c-sum" id="summary" hidden>
+      <div class="big"><span id="hitCount">0</span>处命中<span id="fileSpread" style="font-weight:400;color:var(--mut);font-size:12.5px"></span></div>
+      <span class="sp"></span>
+      <button class="btn" id="btnAI" type="button">AI 精确抽取全部命中</button>
+      <button class="iconbtn" id="btnCopyPrompt" type="button" title="无法直连 API 时：复制后粘给其他 AI 工具，再把返回 JSON 粘回「设置→解析回填」">复制查询包（可交其他AI工具代查）</button>
+    </section>
+
+    <section class="card cands c-cands" id="candBox" hidden>
+      <div class="lab">候选译法 · 共现统计（无需联网，按出现在多少个不同段落中排序；出现越集中越可能是固定译法）</div>
+      <div class="crow" id="cands"></div>
+      <div class="hint" id="candNote"></div>
+    </section>
+
+    <section class="card c-results" style="padding:0;background:transparent;border:0;box-shadow:none">
+      <div class="results" id="results"></div>
+    </section>
+
+  <section class="card c-files" id="card-files">
+      <h2>语料文件<span class="n" id="loadState">未加载</span></h2>
+      <div class="drop" id="drop" tabindex="0">
+        <div class="t1">拖入或点击选择文件</div>
+        <div class="t2">支持 .docx / .txt / .md，可多选、可重复追加</div>
+      </div>
+      <input type="file" id="file" accept=".docx,.txt,.md,.doc" multiple hidden>
+      <div class="lbl">本地存储与备份</div>
+      <div class="row" style="margin-top:0">
+        <button class="btn ghost" id="btnDir" type="button">选择资料库文件夹</button>
+        <button class="iconbtn" id="btnOpenDir" type="button">显示本地路径</button>
+        <button class="iconbtn" id="btnBackup" type="button">一键备份</button>
+        <button class="iconbtn" id="btnImpAll" type="button">导入备份</button>
+        <button class="iconbtn" id="btnNewFolder" type="button">＋ 新建文件夹</button>
+      </div>
+      <div class="astat" id="dirStat" hidden></div>
+      <input type="file" id="jsonfile" accept=".json" hidden>
+      <ul class="flist" id="flist"></ul>
+      <div id="warnBox"></div>
+      <div class="hint" id="pairHint">解析与配对全部在本机浏览器内完成，文件不会上传到任何服务器。</div>
+    </section>
+
+  <section class="card c-align" id="card-align">
+      <h2>无格式中英素材<span class="n" id="alState"></span></h2>
+      <div class="hint" style="margin:0 0 4px">对付「没有中英交替格式」的素材：整块中文＋整块英文、或一个中文网页＋一个英文网页。程序按句子切分后用数字与专有名词做锚点动态规划对齐，能自动纠正段落错位。</div>
+      <div class="lbl" style="display:flex;align-items:center;gap:8px">中文全文 / 中文网页另存的 .html<button class="iconbtn" id="btnClrZh" type="button" style="margin-left:auto;padding:2px 9px;font-size:11.5px;min-height:24px">清空</button></div>
+      <textarea class="ta" id="zhSrc" placeholder="粘贴中文正文，或把文件直接拖到这里"></textarea>
+      <div class="lbl" style="display:flex;align-items:center;gap:8px">英文全文 / 英文网页另存的 .html<button class="iconbtn" id="btnClrEn" type="button" style="margin-left:auto;padding:2px 9px;font-size:11.5px;min-height:24px">清空</button></div>
+      <textarea class="ta" id="enSrc" placeholder="粘贴英文正文，或把文件直接拖到这里"></textarea>
+      <div class="urlrow">
+        <input type="text" id="zhUrl" placeholder="中文网页 URL">
+        <input type="text" id="enUrl" placeholder="英文网页 URL">
+        <button class="btn ghost" id="btnFetch" type="button">抓取</button>
+      </div>
+      <div class="astat" id="alStat">尚未解析。</div>
+      <div class="row">
+        <input type="text" id="alName" placeholder="语料名称（默认取网页标题）" style="flex:1 1 140px;min-width:0;padding:8px 10px;border:1px solid var(--line);border-radius:9px;background:var(--bg);font-size:13px">
+        <button class="btn" id="btnAlign" type="button">对齐并加入语料</button>
+      </div>
+      <div class="row"><button class="iconbtn" id="btnWebHelp" type="button">网页抓取说明</button></div>
+    </section>
+
+</div>
+
+<!-- SECTION: modal settings -->
+<div class="mask" id="mask">
+  <div class="modal">
+    <div class="mhead"><h3>设置</h3><button class="x" id="btnClose" type="button">×</button></div>
+    <div class="fld">
+      <label>API Base URL</label>
+      <input type="text" id="cfgBase" placeholder="https://dashscope.aliyuncs.com/compatible-mode/v1">
+      <div class="tip">填 OpenAI 兼容地址即可（通义 DashScope 兼容模式、OpenAI、Kimi、DeepSeek、本地 Ollama 等均可），程序会自动拼接 /chat/completions。</div>
+    </div>
+    <div class="fld"><label>Model 模型名</label><input type="text" id="cfgModel" placeholder="qwen-plus"></div>
+    <div class="fld"><label>API Key</label><input type="password" id="cfgKey" placeholder="sk-...">
+      <div class="tip">密钥只保存在这台电脑的浏览器 localStorage 里，仅由本页面直接发往你填写的 API 地址，不经过任何第三方。</div>
+    </div>
+    <div class="fld"><label>网页抓取代理（可选）</label><input type="text" id="cfgProxy" placeholder="留空则只能拖入另存的网页文件或粘贴文本">
+      <div class="tip">浏览器直接请求政府网站会被跨域策略拦截。可填任意允许跨域的读取代理（如 <code>https://r.jina.ai/</code>，程序会自动拼接 URL），或只用自己的服务器中转。留空不影响其他功能。</div>
+    </div>
+    <div class="fld"><label><input type="checkbox" id="cfgPersist" style="width:auto;margin-right:6px">把解析后的语料索引保存在浏览器，下次打开免重新导入</label></div>
+    <div class="fld"><label>浏览器被 CORS 拦截时的备用路径</label>
+      <textarea id="pasteBack" placeholder="把 AI 返回的 JSON 粘贴到这里，然后点下方「解析回填」"></textarea>
+      <div class="row"><button class="btn ghost" id="btnParse" type="button">解析回填</button><span class="sp"></span></div>
+    </div>
+    <div class="fld"><label>本地文件占用</label>
+      <div class="row" style="margin-top:0"><button class="iconbtn" id="btnCheckSize" type="button">检查本地文件大小</button></div>
+      <div class="astat" id="sizeStat" hidden></div>
+    </div>
+    <div class="fld"><label>术语库导入 / 导出</label>
+      <div class="row" style="margin-top:0">
+        <button class="btn ghost" id="btnImp2" type="button">导入术语库 CSV</button>
+        <button class="iconbtn" id="btnExp2" type="button">导出术语库 CSV</button>
+      </div>
+      <input type="file" id="csvfile2" accept=".csv,.txt" hidden>
+      <div class="tip" style="margin-top:8px">若新标签页的改动没有自动同步过来（部分浏览器会拦截本地页面之间的通信），在那个页面点「复制术语库 JSON」，粘到下面再点应用：</div>
+      <textarea id="gPaste" placeholder='粘贴形如 [{"zh":"定心丸","en":"inject confidence into"}] 的 JSON'></textarea>
+      <div class="row" style="margin-top:6px"><button class="btn ghost" id="gApply" type="button">应用粘贴的术语库</button></div>
+      <div class="tip">查看词条清单、按条件筛选、清空，都在主页面的「打开术语库」新标签页里。</div>
+    </div>
+    <div class="row">
+      <button class="btn" id="btnTest" type="button">测试连接</button>
+      <button class="btn ghost" id="btnSave" type="button">保存</button>
+      <button class="iconbtn" id="btnClrIdx" type="button">清除语料索引</button>
+    </div>
+    <div class="msg" id="cfgMsg"></div>
+    <div class="astat" id="cfgDiag"></div>
+  </div>
+</div>
+
+<!-- SECTION: gloss confirm modal -->
+<div class="mask" id="gmask">
+  <div class="modal" style="max-width:540px">
+    <div class="mhead"><h3 id="gmTitle">写入术语库</h3><button class="x" id="gmClose" type="button">×</button></div>
+    <div class="astat" id="gmAsk" style="margin-top:6px"></div>
+    <div class="fld"><label>中文词（可直接修改）</label><input type="text" id="gmZh" autocomplete="off"></div>
+    <div class="fld"><label>英文译法（可直接修改）</label><input type="text" id="gmEn" autocomplete="off"></div>
+    <div class="fld"><label>出处（可留空）</label><input type="text" id="gmSrc" autocomplete="off"></div>
+    <div class="row"><button class="btn" id="gmOk" type="button">确认写入</button><button class="iconbtn" id="gmCancel" type="button">取消</button></div>
+  </div>
+</div>
+
+<!-- SECTION: local-only modal -->
+<div class="mask" id="lmask">
+  <div class="modal" style="max-width:580px">
+    <div class="mhead"><h3>新导入的语料是否仅限本地？</h3><button class="x" id="lClose" type="button">×</button></div>
+    <div class="astat" id="lAsk" style="margin-top:6px"></div>
+    <div class="hint" style="margin-top:8px">标记为「仅限本地」的语料：解析、配对、对齐、检索全部留在本机，<b>禁用一切 API 调用</b>——AI 核对、批量抽取、自动抽取、复制查询包都会被排除，不会有任何内容经网络外传。该属性之后可在语料列表里随时改。</div>
+    <div class="row"><button class="btn" id="lAllow" type="button">允许联网（可用 AI 核对）</button><button class="btn ghost" id="lLocal" type="button">仅限本地</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script type="application/json" id="sample-corpus">[{"name": "20251030习近平同美国总统特朗普在釜山举行会晤（外交部通稿）", "units": [{"zh": "习近平同美国总统特朗普在釜山举行会晤", "en": "President Xi Jinping Meets with U.S. President Donald J. Trump in Busan", "zp": [1, 1], "ep": [2, 2]}, {"zh": "当地时间2025年10月30日，国家主席习近平在釜山同美国总统特朗普举行会晤。", "en": "On October 30, 2025 local time, President Xi Jinping had a meeting with U.S. President Donald J. Trump in Busan.", "zp": [4, 4], "ep": [5, 5]}, {"zh": "习近平指出，中美关系在我们共同引领下，保持总体稳定。两国做伙伴、做朋友，这是历史的启示，也是现实的需要。两国国情不同，难免有一些分歧，作为世界前两大经济体，时而也会有摩擦，这很正常。面对风浪和挑战，两国元首作为掌舵人，应当把握好方向、驾驭住大局，让中美关系这艘大船平稳前行。我愿继续同特朗普总统一道，为中美关系打下一个稳固的基础，也为两国各自发展营造良好的环境。", "en": "President Xi noted that under our joint guidance, China-U.S. relations have remained stable on the whole. China and the United States should be partners and friends. This is what history has taught us and what reality needs. Given our different national conditions, we do not always see eye to eye with each other and it is normal for the two leading economies of the world to have frictions now and then. You and I are at the helm of China-U.S. relations. In the face of winds, waves and challenges, we should stay the right course, navigate through the complex landscape, and ensure the steady sailing forward of the giant ship of China-U.S. relations. I am ready to continue working with you to build a solid foundation for China-U.S. relations and create a sound atmosphere for the development of both countries.", "zp": [7, 7], "ep": [8, 8]}, {"zh": "习近平强调，中国经济发展势头不错，今年前三季度增长率达5.2%，对全球的货物贸易进出口增长4%，这是克服内外困难实现的，来之不易。中国经济是一片大海，规模、韧性、潜力都比较大，我们有信心也有能力应对各种风险挑战。", "en": "President Xi emphasized that there is a good momentum in China’s economic development. In the first three quarters of this year, China’s economy increased by 5.2 percent, and import and export trade in goods with the rest of the world expanded by 4 percent. This is not an easy accomplishment given the domestic and external difficulties. The Chinese economy is like a vast ocean, big, resilient and promising. We have the confidence and capability to navigate all kinds of risks and challenges.", "zp": [11, 11], "ep": [12, 12]}, {"zh": "中共二十届四中全会审议通过了未来5年的国民经济和社会发展规划建议。70多年来，我们坚持一张蓝图绘到底，一茬接着一茬干，从来没有想挑战谁、取代谁，而是集中精力办好自己的事，做更好的自己，同世界各国分享发展机遇。这是中国成功的重要密码。中国将进一步全面深化改革、扩大对外开放，着力推动经济实现质的有效提升和量的合理增长，推进人的全面发展和全体人民共同富裕，相信这也将为中美合作开辟更广阔空间。", "en": "At its fourth plenary session, the 20th CPC Central Committee deliberated over and adopted the recommendations for the economic and social development plan over the next five years. Over the past seven decades and more, we have been working from generation to generation on the same blueprint to make it a reality. We have no intention to challenge or supplant anyone. Our focus has always been on managing China’s own affairs well, improving ourselves, and sharing development opportunities with all countries across the world. And that is an important secret to our success. China will further deepen reform across the board, expand opening up, and promote higher-quality economic growth while achieving an appropriate increase in economic output, and advance well-rounded human development and common prosperity for all. This will also expand the space for cooperation between China and the United States.", "zp": [14, 14], "ep": [15, 15]}, {"zh": "习近平指出，两国经贸团队就重要经贸问题深入交换意见，形成了解决问题的共识。双方团队要尽快细化和敲定后续工作，将共识维护好、落实好，以实实在在的成果，给中美两国和世界经济吃下一颗“定心丸”。中美经贸关系近期经历曲折，也给双方带来一些启示。经贸应该继续成为中美关系的压舱石和推进器，而不是绊脚石和冲突点。双方应该算大账，多看合作带来的长远利益，而不应陷入相互报复的恶性循环。双方团队可以继续本着平等、尊重、互惠的原则谈下去，不断压缩问题清单，拉长合作清单。", "en": "President Xi noted that the two teams had an in-depth exchange of views on important economic and trade issues, and reached consensus on solving various issues. They should work out and finalize the follow-up steps as soon as possible, and ensure that the common understandings are effectively upheld and implemented, to inject confidence into the two countries as well as the global economy through solid deliverables. China-U.S. economic and trade relations have experienced ups and downs recently, and this has also given the two sides some insights. The business relationship should continue to serve as the anchor and driving force for China-U.S. relations, not a stumbling block or a point of friction. The two sides should think big and recognize the long-term benefit of cooperation, and must not fall into a vicious cycle of mutual retaliation. The two teams can continue their talks in the spirit of equality, mutual respect and mutual benefit, and continuously shorten the list of problems and lengthen the list of cooperation.", "zp": [17, 17], "ep": [18, 18]}, {"zh": "习近平强调，对话比对抗好。中美之间各渠道各层级应该保持沟通，增进了解。两国在打击非法移民和电信诈骗、反洗钱、人工智能、应对传染疾病等领域合作前景良好，对口部门应该加强对话交流，开展互利合作。中美在地区和国际舞台也应该良性互动。当今世界还有很多难题，中国和美国可以共同展现大国担当，携手多办一些有利于两国和世界的大事、实事、好事。", "en": "President Xi stressed that dialogue is better than confrontation. China and the U.S. should maintain communication through various channels and at various levels to enhance mutual understanding. There is good potential for the two countries to work together on combating illegal immigration and telecom fraud, anti-money laundering, artificial intelligence, and responding to infectious diseases. The competent departments should strengthen dialogue and exchanges and carry out mutually beneficial cooperation. China and the U.S. should also engage in positive interactions on regional and international platforms. The world today is confronted with many tough problems. China and the United States can jointly shoulder our responsibility as major countries, and work together to accomplish more great and concrete things for the good of our two countries and the whole world.", "zp": [20, 20], "ep": [21, 21]}, {"zh": "明年，中国将担任亚太经合组织东道主，美国将主办二十国集团峰会。双方可以相互支持，争取两场峰会都取得积极成果，为促进世界经济增长、完善全球经济治理作出贡献。", "en": "China will host APEC 2026, and the U.S. the G20 summit next year. The two sides can support each other in making both summits productive to promote world economic growth and improve global economic governance.", "zp": [23, 23], "ep": [24, 24]}, {"zh": "特朗普表示，很荣幸同习近平主席会面。中国是伟大国家，习主席是受人尊敬的伟大领导人，也是我多年的好朋友，我们相处非常愉快。美中关系一直很好，将来会更好，希望中国和美国的未来都更加美好。中国是美国最大的伙伴，两国携手可以在世界上做成很多大事，未来美中合作会取得更大成就。中国将举办2026年亚太经合组织领导人非正式会议，美国将举办二十国集团峰会，乐见双方取得成功。", "en": "President Trump said that it is a great honor to meet President Xi. China is a great country. President Xi is a well respected great leader, and has been my good friend for many years. We have always got along well. The United States and China have always had a fantastic relationship, and it will be even better. We will make both China and the U.S. even better. China is the biggest partner of the U.S. Together, our two countries can get many great things done for the world and have many years of success. China will host APEC 2026, and the U.S. will host the G20 summit next year. We expect both to be successful.", "zp": [28, 28], "ep": [29, 29]}, {"zh": "两国元首同意加强双方在经贸、能源等领域合作，促进人文交流。", "en": "The two presidents agreed to enhance cooperation in economic, trade, energy and other fields and to encourage more people-to-people exchanges.", "zp": [31, 31], "ep": [32, 32]}, {"zh": "两国元首同意保持经常性交往。特朗普期待明年早些时候访华，邀请习近平主席访问美国。", "en": "The two presidents agreed to maintain interactions on a regular basis. President Trump looked forward to visiting China early next year, and invited President Xi to visit the United States.", "zp": [34, 34], "ep": [35, 35]}, {"zh": "蔡奇、王毅、何立峰等参加会见。", "en": "Cai Qi, Wang Yi, and He Lifeng, among others, attended the meeting.", "zp": [37, 37], "ep": [38, 38]}]}, {"name": "20251028李强在第28次中国—东盟领导人会议上的讲话", "units": [{"zh": "在第28次中国—东盟领导人会议上的讲话 中华人民共和国国务院总理　李强 （2025年10月28日，吉隆坡）", "en": "Remarks by H.E. Li Qiang Premier of the State Council Of the People's Republic of China At the 28th China-ASEAN Summit Malaysia, October 28, 2025", "zp": [1, 3], "ep": [5, 8]}, {"zh": "尊敬的安瓦尔总理， 各位同事：", "en": "Honorable Prime Minister Dato' Seri Anwar Ibrahim, Colleagues,", "zp": [11, 12], "ep": [13, 14]}, {"zh": "很高兴同大家在吉隆坡相聚。感谢安瓦尔总理和马来西亚政府的周到安排。", "en": "It is my great pleasure to join you in Kuala Lumpur. I wish to thank Prime Minister Anwar Ibrahim and the Malaysian government for their thoughtful arrangements.", "zp": [16, 16], "ep": [17, 17]}, {"zh": "今年是世界反法西斯战争胜利80周年。9月份，中国举行了一系列隆重的纪念活动，东盟很多国家领导人应邀出席，共同缅怀那段艰苦卓绝、可歌可泣的峥嵘岁月。在那场战争中，中国与东南亚国家不畏强暴、奋起抗争，相互支持、并肩战斗，最终赢得独立和解放。随后数十年，我们又一道共同发展，以相互启迪、通力合作实现经济快速增长，以守望相助、和衷共济渡过金融危机、海啸、新冠疫情等重大难关。正如今年4月习近平主席出访东南亚时所讲，团结就是力量，合作才能共赢。中国和东盟国家作为相近相通、相亲相依的好邻居、好兄弟，只要我们团结自强，就能迸发出惊人的巨大能量，就没有什么困难战胜不了。", "en": "This year marks the 80th anniversary of the victory of the World Anti-Fascist War. In September, China held a series of solemn commemorative events, and many ASEAN leaders joined us in Beijing to honor that arduous yet heroic chapter of history. During that war, China and Southeast Asian nations, undeterred by tyranny, rose up in resistance, stood by one another, and fought shoulder to shoulder till we achieved independence and liberation. In the ensuing decades, we continued to stand side by side to promote common development. We inspired one another and pulled together to deliver rapid economic growth. We supported one another and coalesced amid hardships to overcome major challenges like financial crises, tsunamis, and the COVID-19 pandemic. As President Xi Jinping noted during his visit to Southeast Asia in April, \"Unity brings strength, and cooperation leads to mutual success.\" China and ASEAN countries are good neighbors and good brothers, standing close and connected, in kinship and in mutual support. As long as we stay united and independent, we will generate immense strength. No difficulty is too great for us to surmount.", "zp": [19, 19], "ep": [20, 20]}, {"zh": "我们很高兴地看到，过去一年，中国与东盟国家共同发展取得新成绩。双方各领域合作蓬勃开展，贸易规模稳步提升，“东盟签证”推动人文交流更加热络。我们刚刚共同见证签署了中国—东盟自贸区3.0版升级议定书，经贸合作扩容提质迎来新的契机。同时要看到，当前国际形势出现不少新的变化。单边主义、保护主义严重冲击国际经贸秩序，外部势力对本地区的干涉扰动上升，不少国家被无理加征高额关税，发展面临更大的风险挑战。面对强权政治、经济霸凌，不团结、搞对立不仅得不到任何好处，还会被外部势力分而治之。越是形势严峻，我们越应当更加坚定地团结自强，在相互倚重、协调行动中捍卫自身正当权益，在互通有无、深化合作中促进经济稳健增长。中国愿同东盟国家一道，凝聚更大合力，排除外部干扰，携手抵御风险挑战，开创我们共同的光明前景。", "en": "Today, we look back with delight on a year of fresh progress in China-ASEAN joint endeavors. Across all areas our cooperation is flourishing. Trade has been growing steadily. The \"ASEAN Visa\" has brought our peoples even closer. And we have just witnessed the signing of the China-ASEAN Free Trade Area 3.0 Upgrade Protocol, heralding a new opportunity to expand and enhance our economic and trade cooperation. At the same time, we must pay attention to the new developments on the international landscape. Unilateralism and protectionism are buffeting the international economic and trade order, external interference in our region is on the rise, and many countries are slapped with unwarranted high tariffs. Development today faces greater risks and challenges. In the face of power politics and economic bullying, we will gain nothing from disunity and confrontation, and will only end up divided and conquered by external forces. The more challenging the situation, the more resolute we should be in maintaining unity and self-reliance. We must defend our legitimate rights and interests through mutual support and coordinated action, and promote steady and sound economic growth by leveraging our complementary strengths and deepening our cooperation. China is ready to work with ASEAN countries to build greater synergy, remove external disturbances, address risks and challenges together, and create a brighter future for all of us.", "zp": [22, 22], "ep": [23, 23]}, {"zh": "各位同事：", "en": "Colleagues,", "zp": [25, 25], "ep": [26, 26]}, {"zh": "今年5月，东盟峰会通过《东盟共同体愿景2045》。中国愿同东盟国家加强发展战略对接，落实好《中国—东盟全面战略伙伴关系行动计划（2026—2030）》，继续推动构建更为紧密的中国—东盟命运共同体，续写我们团结自强的新篇章。", "en": "Last May, the ASEAN Summit adopted the ASEAN Community Vision 2045. China stands ready to work with ASEAN countries to strengthen the alignment of development strategies, deliver on the Plan of Action to Implement the ASEAN-China Comprehensive Strategic Partnership (2026-2030), continue advancing the building of an even closer China-ASEAN community with a shared future, and keep writing new chapters of China-ASEAN unity for strength.", "zp": [28, 28], "ep": [29, 29]}, {"zh": "第一，让战略互信更加坚实。中国和东盟国家有着相近的价值观念，平等相待、和合与共是我们的共同诉求。我们应当加强战略沟通，妥善处理分歧，使信任始终成为主流。中方将继续支持东盟发挥积极作用，通过“东盟方式”推动柬泰和平解决争端。要加快推进“南海行为准则”磋商并争取尽早达成，更好维护南海和平稳定。", "en": "First, we should further consolidate strategic mutual trust. China and ASEAN countries share similar values, and equality and harmonious coexistence are our common pursuit. We should strengthen strategic communication and properly handle differences to ensure that trust remains the defining theme of our relations. China will continue to support ASEAN in playing an active role and promoting the peaceful settlement of disputes between Cambodia and Thailand in the ASEAN way. We need to speed up consultations on the COC and strive for its early conclusion to better maintain peace and stability in the South China Sea.", "zp": [31, 31], "ep": [32, 32]}, {"zh": "第二，让利益融合更加深入。我们应当以实施中国—东盟自贸区3.0版升级议定书为契机，加快推进贸易和投资自由化便利化，加强产业互融互嵌。中方将继续向中国—东盟合作基金注资，为双方务实合作提供支持。中方愿同东盟国家设立中国—东盟数字学院，搭建人工智能合作平台机制，建立海事发展与技术合作中心等，深化交通运输、数字经济、绿色经济、防灾减灾、气候变化等合作，把互利共赢的蛋糕不断做大做优。", "en": "Second, we should promote deeper convergence of interests. We should take the China-ASEAN Free Trade Area 3.0 Upgrade Protocol as an opportunity to accelerate trade and investment liberalization and facilitation, and strengthen industrial integration and interconnection. China will continue to replenish the China-ASEAN cooperation fund to support practical cooperation between the two sides. China is ready to work with ASEAN countries to establish a China-ASEAN digital academy, a platform for AI cooperation, and a center for maritime development and technological cooperation, and deepen cooperation in transportation, digital economy, green economy, disaster prevention and mitigation, climate change and other areas, with a view to making the pie of mutually beneficial cooperation bigger and better.", "zp": [34, 34], "ep": [35, 35]}, {"zh": "第三，让情感联结更加牢固。我们应当进一步拓展人文交流的广度和深度。中国愿同东盟办好今年人文交流年闭幕式，将2026年定为“中国—东盟建立全面战略伙伴关系5周年”主题年，加快建立中国—东盟旅游部长会议、教育部长会议机制，用好中国—东盟行政院校和智库合作网络，持续增进双方相互理解和友谊。", "en": "Third, we should forge stronger people-to-people bonds. We should further expand the breadth and depth of people-to-people exchanges. China will work with ASEAN to hold a successful closing ceremony of the China-ASEAN Year of People-to-People Exchanges, and designate 2026 as the China-ASEAN Year on the Fifth Anniversary of the Comprehensive Strategic Partnership. We will speed up the establishment of meeting mechanisms of tourism and education ministers of China and ASEAN countries, and make good use of the China-ASEAN Network of Academies on Governance and Public Administration and Think Tanks to enhance our mutual understanding and friendship.", "zp": [37, 37], "ep": [38, 38]}, {"zh": "面向未来，中国愿同东盟国家始终做相互信赖的好朋友、携手发展的好伙伴。让我们坚定团结自强的决心，加快并肩奋进的步伐，推动中国和东盟合作行稳致远，为促进地区和世界和平与发展作出更大贡献。", "en": "Looking forward, China will always be ASEAN's good friend based on mutual trust and good partner for shared development. Let us reaffirm our commitment to unity for strength, march forward together with faster steps, promote the sustained and steady development of China-ASEAN cooperation, and make greater contributions to peace and development of the region and beyond.", "zp": [40, 40], "ep": [41, 41]}, {"zh": "谢谢大家！", "en": "Thank You.", "zp": [43, 43], "ep": [44, 44]}]}]</script>
+
+<script>
+"use strict";
+/* SECTION: store —— localStorage 安全封装（file:// 下可能被禁用，降级为内存） */
+const mem=new Map();
+const S={
+  get(k){ try{ const v=localStorage.getItem(k); return v===null?(mem.has(k)?mem.get(k):null):v; }catch(e){ return mem.has(k)?mem.get(k):null; } },
+  set(k,v){ mem.set(k,v); try{ localStorage.setItem(k,v); return true; }catch(e){ return false; } },
+  del(k){ mem.delete(k); try{ localStorage.removeItem(k); }catch(e){} }
+};
+const K_CORPUS='cn2en.corpus.v1', K_GLOSS='cn2en.glossary.v1', K_CFG='cn2en.cfg.v1', K_RECENT='cn2en.recent.v1', K_FOLDERS='cn2en.folders.v1';
+
+/* SECTION: dom helpers —— 动态值一律 textContent / dataset 注入，不拼 HTML */
+const $=id=>document.getElementById(id);
+function el(tag,cls,text){ const n=document.createElement(tag); if(cls)n.className=cls; if(text!==undefined&&text!==null)n.textContent=text; return n; }
+function btxt(btn,txt,busy){ if(busy){ btn.dataset.label=btn.dataset.label||btn.textContent; btn.textContent=''; btn.appendChild(el('span','spin')); btn.appendChild(document.createTextNode(' '+txt)); btn.disabled=true; } else { if(btn.dataset.label){btn.textContent=btn.dataset.label;} btn.disabled=false; } }
+let toastT=null;
+
+function toast(msg){ const t=$('toast'); t.textContent=msg; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('on'),2600); }
+
+/* SECTION: zip —— 原生解析 docx，不依赖任何外部库 */
+async function inflateRaw(bytes){
+  if(typeof DecompressionStream!=='function') throw new Error('此浏览器不支持解压（需 Chrome/Edge 80+、Firefox 113+、Safari 16.4+）');
+  const stream=new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate-raw'));
+  return new Uint8Array(await new Response(stream).arrayBuffer());
+}
+async function unzip(buffer){
+
+  const dv=new DataView(buffer), u8=new Uint8Array(buffer), dec=new TextDecoder('utf-8');
+  let eocd=-1;
+  for(let i=dv.byteLength-22;i>=0&&i>dv.byteLength-22-66000;i--){ if(dv.getUint32(i,true)===0x06054b50){ eocd=i; break; } }
+  if(eocd<0) throw new Error('文件不是有效的 docx（内部不是 zip 包）');
+  const count=dv.getUint16(eocd+10,true);
+  let off=dv.getUint32(eocd+16,true);
+  const out=new Map();
+  for(let n=0;n<count;n++){
+    if(off+46>dv.byteLength||dv.getUint32(off,true)!==0x02014b50) break;
+    const method=dv.getUint16(off+10,true);
+    let csize=dv.getUint32(off+20,true);
+    const nameLen=dv.getUint16(off+28,true), extra=dv.getUint16(off+30,true), cmt=dv.getUint16(off+32,true);
+    const lo=dv.getUint32(off+42,true);
+    const name=dec.decode(u8.subarray(off+46,off+46+nameLen));
+    const lnl=dv.getUint16(lo+26,true), lex=dv.getUint16(lo+28,true);
+    if(csize===0) csize=dv.getUint32(lo+18,true);
+    const start=lo+30+lnl+lex;
+    const raw=u8.subarray(start,start+csize);
+    if(/\/$/.test(name)){ off+=46+nameLen+extra+cmt; continue; }
+    try{ out.set(name, method===8?await inflateRaw(raw):raw); }catch(e){ out.set(name,raw); }
+    off+=46+nameLen+extra+cmt;
+  }
+  return out;
+}
+function localOf(node){ return node.localName || String(node.nodeName).split(':').pop(); }
+function paraText(p){
+  let s='';
+  const kids=p.querySelectorAll('*');
+  for(const c of kids){
+    const l=localOf(c);
+    if(l==='t') s+=(c.textContent||'');
+    else if(l==='br'||l==='cr') s+=' ';
+    else if(l==='tab') s+=' ';
+    else if(l==='instrText'||l==='delText') continue;
+  }
+  return s.replace(/\u00a0/g,' ').replace(/\u3000/g,' ').trim();
+}
+async function docxParagraphs(bytes){
+  const zip=await unzip(bytes.buffer ? bytes.buffer : new Uint8Array(bytes).buffer);
+  let xml=null;
+  for(const [name,data] of zip){ if(/^word\/document\.xml$/i.test(name)){ xml=new TextDecoder('utf-8').decode(data); break; } }
+  if(!xml) for(const [name,data] of zip){ if(/document\.xml$/i.test(name)){ xml=new TextDecoder('utf-8').decode(data); break; } }
+  if(!xml) throw new Error('压缩包里没有 word/document.xml，可能不是 Word 文档');
+  const doc=new DOMParser().parseFromString(xml,'application/xml');
+  if(doc.getElementsByTagName('parsererror').length) throw new Error('document.xml 解析失败');
+  const all=doc.getElementsByTagName('*'), out=[];
+  for(const e of all){ if(localOf(e)==='p') out.push(paraText(e)); }
+  if(!out.some(s=>s)) throw new Error('未提取到任何文字，可能是扫描件或纯图片文档');
+  return out;
+}
+
+/* SECTION: align —— 语言判定 + 中英块配对 */
+function kindOf(t){
+  const cjk=(t.match(/[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff]/g)||[]).length;
+  const lat=(t.match(/[A-Za-z]/g)||[]).length;
+  if(!t.trim()) return 'E';
+  if(cjk>0 && cjk*2>=lat) return 'ZH';
+  if(lat>0 && lat>cjk*2) return 'EN';
+  return 'OT';
+}
+function buildBlocks(paras){
+  const B=[]; let cur=null;
+  for(let i=0;i<paras.length;i++){
+    const t=paras[i], k=kindOf(t);
+    if(k==='E'||k==='OT') continue;
+    if(cur && cur.k===k){ cur.lines.push(t); cur.end=i; }
+    else { cur={k:k,lines:[t],start:i,end:i}; B.push(cur); }
+  }
+  return B;
+}
+
+function pairUnits(blocks,name){
+  const zs=blocks.filter(b=>b.k==='ZH'), es=blocks.filter(b=>b.k==='EN');
+  const units=[], n=Math.max(zs.length,es.length);
+  for(let i=0;i<n;i++){
+    const z=zs[i], e=es[i];
+    units.push({
+      file:name, idx:i+1, kind:'para',
+      zh:z?z.lines.join(' '):'', en:e?e.lines.join(' '):'',
+      zp:z?[z.start+1,z.end+1]:[0,0], ep:e?[e.start+1,e.end+1]:[0,0],
+      ai:null, unpaired:(!z||!e)
+    });
+  }
+  return {units:units, zExtra:Math.max(0,zs.length-es.length), eExtra:Math.max(0,es.length-zs.length), zTotal:zs.length, eTotal:es.length};
+}
+function splitToParagraphs(text){
+  return text.split(/\n\s*\n|\r\n\s*\r\n/).map(s=>s.replace(/\s*\n\s*/g,' ').trim()).filter(Boolean);
+}
+
+/* SECTION: state */
+let corpus=[];      // [{name, units:[], folder:''}]
+let folders=[];     // 文件夹名列表
+let foldCollapsed={};
+
+let glossary=[];    // [{zh,en,src,note,ts}]
+let cfg={base:'https://dashscope.aliyuncs.com/compatible-mode/v1',model:'qwen-plus',key:'',persist:true,proxy:'',autoAI:false};
+let lastHits=[];    // 本轮命中单元
+let lastTerms=[];   // 本轮查询词
+let lastAI=null;    // AI 结果聚合 {term:[{en,count,srcs}]}
+let lastVerdict=null; // 判定译法结论
+let aiCache=new Map();
+
+function loadCorpus(){
+  const raw=S.get(K_CORPUS);
+  if(!raw) return;
+  try{
+    const p=JSON.parse(raw);
+    const files=Array.isArray(p)?p:(p.files||[]);
+    corpus=files.map(f=>({name:f.name,localOnly:!!f.localOnly,folder:f.folder||'',origin:f.origin||'docx',urls:f.urls||{},importedAt:f.importedAt||null,
+      units:(f.units||[]).map(u=>Object.assign({ai:null,kind:'para'},u))}));
+  }catch(e){}
+}
+function saveCorpus(){
+
+  const slim=corpus.map(f=>({name:f.name,localOnly:!!f.localOnly,folder:f.folder||'',origin:f.origin||'docx',urls:f.urls||{},importedAt:f.importedAt||null,units:f.units.map(u=>({file:u.file,idx:u.idx,zh:u.zh,en:u.en,zp:u.zp,ep:u.ep,ai:u.ai,kind:u.kind,weak:u.weak,loose:u.loose}))}));
+  const ok=S.set(K_CORPUS,JSON.stringify(slim));
+  if(!ok&&$('pairHint')) $('pairHint').textContent='localStorage 已满或被禁用，已改用 IndexedDB 保存。';
+  syncAll();
+}
+function loadGloss(){ try{ const p=JSON.parse(S.get(K_GLOSS)||'[]'); if(Array.isArray(p)) glossary=p; }catch(e){} }
+function applyGlossaryFrom(arr,via){
+  if(!Array.isArray(arr)) return false;
+  const clean=arr.map(g=>({zh:String(g.zh||''),en:String(g.en||''),src:String(g.src||''),note:String(g.note||''),ts:g.ts||Date.now()})).filter(g=>g.zh&&g.en);
+  glossary=clean;
+  S.set(K_GLOSS,JSON.stringify(glossary)); idbSet('glossary',glossary);
+  renderGloss(); renderStats();
+  if(lastTerms&&lastTerms.length) renderGlossHits(lastTerms);
+  toast('术语库已同步（'+(via||'外部')+'）：共 '+glossary.length+' 条');
+  return true;
+}
+function saveGloss(){ S.set(K_GLOSS,JSON.stringify(glossary)); idbSet('glossary',glossary); syncAll(); renderGloss(); renderStats(); }
+function loadCfg(){ try{ const p=JSON.parse(S.get(K_CFG)||'{}'); cfg=Object.assign(cfg,p); }catch(e){} }
+function updateModeTag(){
+  const el2=$('modeTag'); if(!el2) return;
+  el2.textContent=cfg.autoAI?'本地检索 + AI 就绪':'本地检索就绪';
+}
+function allUnits(){ return corpus.reduce((a,f)=>a.concat(f.units),[]); }
+/* SECTION: index —— 双字/单字倒排索引，仅用于粗筛；命中仍走精确匹配，保证不漏检 */
+let idxCache=null, idxKey='';
+function unitIndex(){
+  const us=allUnits();
+  const key=us.length+'|'+corpus.map(f=>f.name+':'+f.units.length).join('|');
+  if(idxCache&&idxKey===key) return idxCache;
+  const g1=new Map(), g2=new Map();
+  const isSp=c=>(c===' '||c==='\n'||c==='\t'||c==='\r');
+  us.forEach((u,i)=>{
+    const s=((u.zh||'')+' '+(u.en||'')).toLowerCase();
+    const s1=new Set(), s2=new Set();
+    for(let k=0;k<s.length;k++){
+      const c=s[k];
+      if(isSp(c)) continue;
+      if(!s1.has(c)){ s1.add(c); let arr=g1.get(c); if(!arr){ arr=[]; g1.set(c,arr); } arr.push(i); }
+      if(k+1<s.length){
+        const c2=s[k+1];
+        if(isSp(c2)) continue;
+        const gr=c+c2;
+        if(!s2.has(gr)){ s2.add(gr); let arr=g2.get(gr); if(!arr){ arr=[]; g2.set(gr,arr); } arr.push(i); }
+      }
+    }
+  });
+  idxCache={us:us,g1:g1,g2:g2}; idxKey=key;
+  return idxCache;
+}
+function candidateUnits(terms){
+  const ix=unitIndex();
+  let set=null;
+  for(const t of terms){
+    if(!t) continue;
+    const q=String(t).toLowerCase();
+    const pre=q.slice(0,2);
+    const useG2=(q.length>=2 && !/\s/.test(pre));
+    const arr=useG2?(ix.g2.get(pre)||[]):(ix.g1.get(q[0])||[]);
+    const s2=new Set(arr);
+    if(set===null){ set=s2; continue; }
+    const next=new Set();
+    set.forEach(i=>{ if(s2.has(i)) next.add(i); });
+    set=next;
+  }
+  if(set===null) return ix.us.slice();
+  const out=[]; set.forEach(i=>out.push(ix.us[i]));
+  return out;
+}
+/* SECTION: persist —— IndexedDB 主存 + 可选本地资料库目录（原件与导出落盘） */
+const DB_NAME='cn2en-lib', DB_STORE='kv';
+function idb(){ return new Promise((res,rej)=>{
+  if(!window.indexedDB) return rej(new Error('浏览器不支持 IndexedDB'));
+  let r; try{ r=indexedDB.open(DB_NAME,1); }catch(e){ return rej(e); }
+  r.onupgradeneeded=()=>{ try{ r.result.createObjectStore(DB_STORE); }catch(e){} };
+  r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error||new Error('IndexedDB 打开失败'));
+});}
+async function idbSet(k,v){
+  try{ const db=await idb(); return await new Promise((res,rej)=>{
+    const tx=db.transaction(DB_STORE,'readwrite'); tx.objectStore(DB_STORE).put(v,k);
+    tx.oncomplete=()=>res(true); tx.onerror=()=>rej(tx.error||new Error('写入失败')); });
+  }catch(e){ return false; }
+}
+async function idbGet(k){
+  try{ const db=await idb(); return await new Promise(res=>{
+    const rq=db.transaction(DB_STORE,'readonly').objectStore(DB_STORE).get(k);
+    rq.onsuccess=()=>res((rq.result===undefined||rq.result===null)?null:rq.result); rq.onerror=()=>res(null); });
+  }catch(e){ return null; }
+}
+let dirH=null, dirName='';
+function fsSupported(){ return typeof window.showDirectoryPicker==='function'; }
+async function pickDir(){
+  if(!fsSupported()) throw new Error('此浏览器不支持选择本地文件夹，请用「导出备份」保存数据');
+  dirH=await window.showDirectoryPicker({mode:'readwrite'});
+  dirName=dirH.name||'资料库';
+  await idbSet('dirHandle',dirH);
+  await syncToDisk();
+  renderDbState();
+  return true;
+}
+async function restoreDir(){
+  const hint=$('dbState');
+  if(!fsSupported()){ if(hint) hint.textContent='本地库：IndexedDB 已启用 · 本浏览器不支持文件夹同步'; return false; }
+  const hd=await idbGet('dirHandle');
+  if(!hd){ if(hint) hint.textContent='本地库：IndexedDB 已启用 · 未连接文件夹'; return false; }
+  try{
+    if(hd.queryPermission){
+      const p=await hd.queryPermission({mode:'readwrite'});
+      if(p!=='granted'){ if(hint) hint.textContent='本地库：需重新授权「'+(hd.name||'资料库')+'」'; dirH=hd; dirName=hd.name||'资料库'; return 'need'; }
+    }
+    dirH=hd; dirName=hd.name||'资料库'; renderDbState(); return true;
+  }catch(e){ return false; }
+}
+async function reConnect(){
+  if(!dirH) return pickDir();
+  if(dirH.requestPermission){
+    const p=await dirH.requestPermission({mode:'readwrite'});
+    if(p!=='granted') throw new Error('未授予写入权限');
+  }
+  await syncToDisk(); renderDbState(); return true;
+}
+function renderDbState(){
+  const hint=$('dbState'); if(!hint) return;
+  hint.textContent=dirH?('本地库：已连接「'+dirName+'」'):('本地库：IndexedDB 已启用 · 未连接文件夹');
+  renderDirStat();
+}
+function renderDirStat(){
+  const s=$('dirStat'); if(!s) return;
+  if(dirH){
+    s.textContent='资料库「'+dirName+'」/　中英对照语料.json · 术语库.csv · 原件/ · 正文/';
+    s.title='浏览器出于安全限制不暴露绝对路径，请在系统里定位名为「'+dirName+'」的文件夹';
+  }else{
+    s.textContent=fsSupported()
+      ? '尚未连接文件夹：数据暂存于浏览器 IndexedDB，建议选一个文件夹做磁盘备份'
+      : '尚未连接文件夹：当前浏览器不支持文件夹同步（需 Chrome/Edge），数据暂存于 IndexedDB';
+  }
+}
+function fmtBytes(n){
+  n=Number(n)||0;
+  if(n<1024) return n+' B';
+  if(n<1048576) return (n/1024).toFixed(1)+' KB';
+  if(n<1073741824) return (n/1048576).toFixed(2)+' MB';
+  return (n/1073741824).toFixed(2)+' GB';
+}
+function snapshotAll(){
+  const obj=corpusSnapshot();
+  obj.glossary=glossary;
+  obj.cfgPublic={base:cfg.base,model:cfg.model,autoAI:!!cfg.autoAI,proxy:cfg.proxy||''};
+  return obj;
+}
+async function writeDisk(relPath,data){
+  if(!dirH) return false;
+  try{
+    const parts=relPath.split('/'); let d=dirH;
+    for(let i=0;i<parts.length-1;i++) d=await d.getDirectoryHandle(parts[i],{create:true});
+    const fh=await d.getFileHandle(parts[parts.length-1],{create:true});
+    const w=await fh.createWritable(); await w.write(data); await w.close(); return fh;
+  }catch(e){ return false; }
+}
+function corpusSnapshot(){
+  return {tool:'中英对照术语查询器',version:1,updatedAt:new Date().toISOString(),folders:folders.slice(),
+    files:corpus.map(f=>({name:f.name,localOnly:!!f.localOnly,folder:f.folder||'',origin:f.origin||'docx',urls:f.urls||{},importedAt:f.importedAt||null,
+      unitCount:f.units.length,
+      units:f.units.map(u=>({idx:u.idx,zh:u.zh,en:u.en,zp:u.zp,ep:u.ep,kind:u.kind||'para',weak:!!u.weak,ai:u.ai||null}))}))};
+}
+function glossCSV(){
+  const rows=[['中文','英文译法','出处','来源方式','确认时间']];
+  glossary.forEach(g=>rows.push([g.zh,g.en,g.src||'',g.note||'',g.ts?new Date(g.ts).toLocaleString():'']));
+  return '\ufeff'+rows.map(r=>r.map(csvCell).join(',')).join('\r\n');
+}
+let syncT=null, synced=false;
+function syncAll(){
+  const payload=corpusSnapshot();
+  idbSet('corpus',payload);
+  idbSet('glossary',glossary);
+  S.set(K_CORPUS,JSON.stringify(payload.files));
+  clearTimeout(syncT);
+  syncT=setTimeout(async()=>{
+    if(!dirH) return;
+    const a=await writeDisk('中英对照语料.json',JSON.stringify(payload,null,1));
+    const b=await writeDisk('术语库.csv',glossCSV());
+    if(a&&b){ synced=true; const s=$('dbState'); if(s&&!/已连接/.test(s.textContent)) renderDbState(); }
+  },900);
+}
+async function loadFromIDB(){
+  const p=await idbGet('corpus');
+  if(!p||!Array.isArray(p.files)||!p.files.length) return false;
+  if(Array.isArray(p.folders)) folders=p.folders.slice();
+  corpus=p.files.map(f=>({name:f.name,localOnly:!!f.localOnly,folder:f.folder||'',origin:f.origin||'docx',urls:f.urls||{},importedAt:f.importedAt||null,
+    units:(f.units||[]).map(u=>({file:f.name,idx:u.idx,zh:u.zh,en:u.en,zp:u.zp,ep:u.ep,ai:u.ai||null,kind:u.kind||'para',weak:!!u.weak}))}));
+  const g=await idbGet('glossary'); if(Array.isArray(g)) glossary=g;
+  return true;
+}
+async function saveOriginalFile(file,safeName){
+  if(!dirH) return false;
+  const fh=await writeDisk('原件/'+safeName, file);
+  return !!fh;
+}
+function safeName(n){ return String(n).replace(/[\\/:*?"<>|]/g,'-').slice(0,120); }
+
+/* SECTION: stats & files */
+function renderStats(){
+  $('cFiles').textContent=corpus.length;
+  $('cUnits').textContent=allUnits().length;
+  $('cGloss').textContent=glossary.length;
+  $('gCount').textContent=glossary.length+' 条';
+
+  $('loadState').textContent=corpus.length?('已加载 '+corpus.length+' 个'):'未加载';
+}
+function renderFiles(){
+  const ul=$('flist'); ul.textContent='';
+  const groups={};
+  corpus.forEach(f=>{ const k=f.folder||''; if(k&&folders.indexOf(k)<0) f.folder=''; const kk=f.folder||''; (groups[kk]=groups[kk]||[]).push(f); });
+
+  function fileRow(f,indent){
+    const li=el('li',indent?'indent':'');
+    const nm=el('span','nm',f.name); nm.title=f.name;
+    const ct=el('span','ct',f.units.length+' 组');
+    const bd=el('button','badge'+(f.localOnly?' local':''),f.localOnly?'仅本地':'可联网');
+    bd.type='button'; bd.title='点击切换：仅限本地时禁用一切 API 调用';
+    bd.addEventListener('click',()=>{
+      if(f.localOnly){
+        if(!confirm('将「'+f.name+'」改为可联网？\n改后该文件内容可能被发送到你配置的 API 用于 AI 核对。')) return;
+        f.localOnly=false;
+      }else f.localOnly=true;
+      renderFiles(); saveCorpus();
+      toast(f.localOnly?'已标记「仅限本地」：该文件内容不会经网络外传':'已允许联网：该文件可用 AI 核对');
+    });
+    const sel=el('select','sel');
+    sel.title='移动到文件夹';
+    const o0=el('option',null,'未分组'); o0.value=''; sel.appendChild(o0);
+    folders.forEach(fn2=>{ const o=el('option',null,fn2); o.value=fn2; sel.appendChild(o); });
+    sel.value=f.folder||'';
+    sel.addEventListener('click',e=>e.stopPropagation());
+    sel.addEventListener('change',()=>{ f.folder=sel.value; renderFiles(); saveCorpus(); toast(sel.value?('已移入「'+sel.value+'」'):'已移出文件夹'); });
+    const op=el('button','openbtn','打开'); op.type='button';
+    op.title=(f.urls&&(f.urls.zh||f.urls.en))?'打开源网页':'打开该文件的完整中英对照';
+    op.addEventListener('click',()=>openSourceFile(f,null));
+    const ra=el('button','openbtn','重新对应'); ra.type='button';
+    ra.title='按句子锚点重排该文件的中英配对（适用于段落边界不一致、整体错位的情况）';
+    ra.addEventListener('click',()=>reAlignOne(f));
+    const x=el('button','x','×'); x.type='button'; x.title='移除该文件';
+    x.addEventListener('click',()=>{ corpus=corpus.filter(o=>o!==f); renderFiles(); renderStats(); saveCorpus(); toast('已移除：'+f.name); });
+    li.appendChild(nm); li.appendChild(ct); li.appendChild(bd); li.appendChild(sel);
+    li.appendChild(ra); li.appendChild(op);
+    if(undoAlign&&(undoAlign.name===f.name||undoAlign.name==='*')){
+      const un=el('button','openbtn','撤销'); un.type='button'; un.title='撤销刚才的重新对应';
+      un.addEventListener('click',undoRealign);
+      li.appendChild(un);
+    }
+    li.appendChild(x);
+    return li;
+  }
+
+  folders.forEach(fn2=>{
+    const items=groups[fn2]||[];
+    const head=el('li','fhead');
+    const arr=el('span','fi',foldCollapsed[fn2]?'▸':'▾');
+    const nm2=el('span','nm',fn2);
+    const cnt=el('span','fc',items.length+' 个');
+    const del=el('button','x','×'); del.type='button'; del.title='删除文件夹（里面的文件会回到未分组）';
+    del.addEventListener('click',ev=>{
+      ev.stopPropagation();
+      if(!confirm('删除文件夹「'+fn2+'」？里面的 '+items.length+' 个文件会回到「未分组」，文件本身不会被删除。')) return;
+      corpus.forEach(f=>{ if(f.folder===fn2) f.folder=''; });
+      folders=folders.filter(x2=>x2!==fn2);
+      saveFolders(); renderFiles(); saveCorpus();
+      toast('已删除文件夹「'+fn2+'」');
+    });
+    del.addEventListener('click',ev=>ev.stopPropagation());
+    head.appendChild(arr); head.appendChild(nm2); head.appendChild(cnt);
+    head.appendChild(el('span','sp')); head.appendChild(del);
+    head.addEventListener('click',()=>{ foldCollapsed[fn2]=!foldCollapsed[fn2]; renderFiles(); });
+    ul.appendChild(head);
+    if(!foldCollapsed[fn2]) items.forEach(f=>ul.appendChild(fileRow(f,true)));
+  });
+
+  (groups['']||[]).forEach(f=>ul.appendChild(fileRow(f,false)));
+  if(!corpus.length) ul.appendChild(el('li','', '还没有语料。把 .docx / .txt 拖进上方区域，或用下面「无格式中英素材」粘贴中英全文。'));
+
+  const wb=$('warnBox'); wb.textContent='';
+  const bad=corpus.filter(f=>f.units.length===0);
+  if(bad.length){
+    const w=el('div','warn'); w.textContent='有 '+bad.length+' 个文件没配对成功（未识别到成段英文，可能是纯中文稿或表格分栏排版）。';
+    wb.appendChild(w);
+  }
+}
+let undoAlign=null;
+function realignFile(f,quiet){
+  if(!f||!f.units||!f.units.length){ if(!quiet) toast('该文件没有可对应的内容'); return null; }
+  const zh=f.units.map(u=>u.zh).filter(Boolean);
+  const en=f.units.map(u=>u.en).filter(Boolean);
+  if(!zh.length||!en.length){ if(!quiet) toast('该文件缺中文或英文，无法重新对应'); return null; }
+  if(zh.length!==en.length&&!quiet){ /* 单侧多出的段落会参与重排，不丢弃 */ }
+  const zs=zh.reduce((s,t)=>s+splitZh(t).length,0);
+  const es=en.reduce((s,t)=>s+splitEn(t).length,0);
+  if(zs*es>450000&&!quiet){
+    if(!confirm('该文件约 '+zs+' 个中文句 / '+es+' 个英文句，重新对应可能需要十几秒，继续吗？')) return null;
+  }
+  const r=alignSents(zh,en);
+  if(!r||!r.groups.length){ if(!quiet) toast('重新对应没有产出结果，已保留原对照'); return null; }
+  const olds=f.units;
+  f.units=r.groups.map((g,i)=>({file:f.name,idx:i+1,zh:g.zh,en:g.en,
+    zp:[g.zi,g.zi+g.za-1],ep:[g.ei,g.ei+g.eb-1],ai:null,kind:'sent',weak:!!g.weak,loose:!!g.loose}));
+  f.realignedAt=Date.now();
+  return {before:olds.length, after:f.units.length, weak:r.weak||0, loose:r.loose||0, olds:olds};
+}
+function reAlignOne(f){
+  if(!f||!f.units||!f.units.length){ toast('该文件没有可对应的内容'); return; }
+  if(!confirm('对「'+f.name+'」重新对应？\n\n现有 '+f.units.length+' 组对照会按句子锚点（数字、日期、专有名词）重新配对并覆盖，已有的 AI 结果会清空。建议先用「一键备份」留底。')) return;
+  const res=realignFile(f);
+  if(!res) return;
+  undoAlign={name:f.name, units:res.olds, at:Date.now()};
+  renderFiles(); renderStats(); saveCorpus();
+  var weakRatio=res.after? res.weak/res.after : 0;
+  if(weakRatio>0.5){
+    showWarn(['「'+f.name+'」重新对应后 '+res.weak+'/'+res.after+' 组缺少可靠锚点，效果可能不如原来的顺序对照。请抽查几组，若变差请点该文件的「撤销」。']);
+  }
+  toast('已重新对应：'+res.before+' → '+res.after+' 组'+(res.weak?('，其中 '+res.weak+' 组锚点较弱'):'')+'（可点「撤销」恢复）');
+}
+function reAlignAll(){
+  const targets=corpus.filter(f=>f.units&&f.units.length);
+  if(!targets.length){ toast('没有可处理的语料'); return; }
+  if(!confirm('对全部 '+targets.length+' 个语料重新对应？\n\n将逐个按句子锚点重排，已有 AI 结果会清空。建议先「一键备份」。\n若某个文件本来就是正确的顺序对照，重新对应通常不会改变结果。')) return;
+  let ok=0, skip=0, before=0, after=0, weak=0;
+  const snapshot=targets.map(f=>({f:f, units:f.units}));
+  targets.forEach(f=>{
+    const res=realignFile(f,true);
+    if(res){ ok++; before+=res.before; after+=res.after; weak+=res.weak; }
+    else skip++;
+  });
+  if(ok) undoAlign={name:'*', list:snapshot, at:Date.now()};
+  renderFiles(); renderStats(); saveCorpus();
+  toast('重新对应完成：'+ok+' 个文件'+(skip?('，'+skip+' 个跳过'):'')+'（'+before+' → '+after+' 组'+(weak?('，'+weak+' 组锚点弱'):'')+'）');
+}
+function undoRealign(){
+  if(!undoAlign){ toast('没有可撤销的操作'); return; }
+  if(undoAlign.name==='*'){
+    (undoAlign.list||[]).forEach(x=>{ if(x.f) x.f.units=x.units; });
+  }else{
+    const f=corpus.find(o=>o.name===undoAlign.name);
+    if(f) f.units=undoAlign.units;
+  }
+  undoAlign=null; renderFiles(); renderStats(); saveCorpus();
+  toast('已撤销，恢复原来的对照');
+}
+function saveFolders(){ S.set(K_FOLDERS,JSON.stringify(folders)); idbSet('folders',folders); }
+function loadFolders(){ try{ const a=JSON.parse(S.get(K_FOLDERS)||'[]'); if(Array.isArray(a)) folders=a; }catch(e){} }
+function newFolder(){
+  const nm=prompt('新建文件夹名称：','');
+  if(nm===null) return;
+  const name=nm.trim();
+  if(!name){ toast('名称不能为空'); return; }
+  if(folders.indexOf(name)>=0){ toast('已有同名文件夹'); return; }
+  folders.push(name); saveFolders(); renderFiles();
+  toast('已新建文件夹「'+name+'」，用右侧下拉把文件移进去');
+}
+
+/* SECTION: ingest */
+async function ingestFiles(list){
+  const bar=$('bar'); bar.classList.add('on'); const fill=bar.querySelector('i');
+  let added=0, errs=[]; const webs=[];
+  const arr=Array.from(list);
+  for(let i=0;i<arr.length;i++){
+    const f=arr[i]; fill.style.width=Math.round((i/arr.length)*100)+'%';
+    try{
+      let paras, name=f.name.replace(/\.(docx|doc|txt|md|htm|html)$/i,'');
+      if(/\.(htm|html)$/i.test(f.name)){
+        const txt=await f.text();
+
+        const nm2=(htmlTitle(txt)||name).replace(/[_\-|].*$/,'').trim().slice(0,40)||name;
+        webs.push({name:nm2,paras:htmlToParagraphs(txt),file:f,raw:txt});
+        if(dirH) writeDisk('原件/'+safeName(nm2)+'.html',txt);
+        continue;
+      }
+      if(/\.docx?$/i.test(f.name)){
+        if(/\.doc$/i.test(f.name)) throw new Error('旧版 .doc 不支持，请先另存为 .docx');
+        paras=await docxParagraphs(new Uint8Array(await f.arrayBuffer()));
+      }else{
+        paras=splitToParagraphs(await f.text());
+      }
+      const res=pairUnits(buildBlocks(paras),name);
+      if(corpus.some(o=>o.name===name)) corpus=corpus.filter(o=>o.name!==name);
+      const meta={name:name,units:res.units,origin:/\.docx?$/i.test(f.name)?'docx':'text',importedAt:Date.now()};
+      addUnits(name,res.units,meta);
+      const rec=corpus.find(o=>o.name===name);
+      if(rec){ rec._liveFile=f; rec.fileRef=f.name; }
+      if(dirH) saveOriginalFile(f, safeName(name)+(/\.docx?$/i.test(f.name)?'.docx':/\.html?$/i.test(f.name)?'.html':'.txt'));
+      if(res.zExtra||res.eExtra) errs.push(name+'：'+(res.zExtra?res.zExtra+'个中文块无对应英文':'')+(res.eExtra?res.eExtra+'个英文块无对应中文':''));
+      added++;
+    }catch(e){ errs.push(f.name+'：'+e.message); }
+  }
+  if(webs.length) handleWebs(webs);
+  fill.style.width='100%'; setTimeout(()=>{bar.classList.remove('on'); fill.style.width='0';},500);
+  renderFiles(); renderStats(); saveCorpus();
+  toast('已解析 '+added+' 个文件，共 '+allUnits().length+' 组对照');
+  if(added) askLocalOnly(Array.from(list).map(f=>f.name.replace(/\.(docx|doc|txt|md|htm|html)$/i,'')),null);
+  if(errs.length) showWarn(errs);
+}
+function showWarn(msgs){
+  const wb=$('warnBox'); wb.textContent='';
+  const w=el('div','warn');
+  msgs.slice(0,4).forEach(m=>{ const d=el('div'); d.textContent='⚠ '+m; w.appendChild(d); });
+  if(msgs.length>4) w.appendChild(el('div',null,'…另有 '+(msgs.length-4)+' 条提示'));
+  wb.appendChild(w);
+}
+let pendLocalNames=null, pendLocalCb=null;
+function askLocalOnly(names,cb){
+  const valid=(names||[]).filter(n=>corpus.some(f=>f.name===n));
+  if(!valid.length){ if(cb) cb(); return; }
+  pendLocalNames=valid; pendLocalCb=cb||null;
+  $('lAsk').textContent='本次导入 '+valid.length+' 个语料：'+valid.slice(0,3).join('、')+(valid.length>3?' 等':'')+'。是否标记为「仅限本地」？';
+  $('lmask').classList.add('on');
+}
+function applyLocalChoice(v){
+  (pendLocalNames||[]).forEach(n=>{ const f=corpus.find(o=>o.name===n); if(f) f.localOnly=!!v; });
+  $('lmask').classList.remove('on');
+  renderFiles(); saveCorpus();
+  const cb=pendLocalCb; pendLocalNames=null; pendLocalCb=null;
+  toast(v?'已标记仅限本地：这些文件不会调用任何 API':'已允许联网：可使用 AI 核对');
+  if(cb) cb();
+}
+function addUnits(name,units,meta){
+  const m=meta||{};
+  units.forEach(u=>{ u.file=name; });
+  corpus=corpus.filter(o=>o.name!==name);
+  const old=corpus.find(o=>o.name===name);
+  corpus.push({name:name,units:units,origin:m.origin||'docx',urls:m.urls||{},importedAt:m.importedAt||Date.now(),fileRef:m.fileRef||'',localOnly:!!m.localOnly,folder:(m.folder!==undefined?m.folder:(old?old.folder||'':'')),folders:undefined});
+  renderFiles(); renderStats(); saveCorpus();
+}
+
+/* SECTION: sents —— 分句与跨语言锚点 */
+const ABBR=new Set('u.s u.n mr mrs ms dr prof st jr sr no inc ltd co corp vs etc e.g i.e approx dept est min max fig al bc ad am pm ok sec ref trans un doi www'.split(' '));
+const MON={January:1,February:2,March:3,April:4,May:5,June:6,July:7,August:8,September:9,October:10,November:11,December:12};
+const NUMW={four:4,five:5,six:6,seven:7,eight:8,nine:9,ten:10,eleven:11,twelve:12,thirteen:13,fourteen:14,fifteen:15,sixteen:16,seventeen:17,eighteen:18,nineteen:19,twenty:20,thirty:30,forty:40,fifty:50,sixty:60,seventy:70,eighty:80,ninety:90};
+function cn2num(s){
+  const D={'\u3007':0,'零':0,'一':1,'二':2,'两':2,'三':3,'四':4,'五':5,'六':6,'七':7,'八':8,'九':9};
+  const U={'十':10,'百':100,'千':1000};
+  if(!/^[\u3007零一二三四五六七八九十百千万亿两]+$/.test(s)) return null;
+  let total=0, sec=0, num=0, hit=false;
+  for(const ch of s){
+    if(D[ch]!==undefined){ num=D[ch]; hit=true; }
+    else if(U[ch]){ sec+=(num===0?1:num)*U[ch]; num=0; hit=true; }
+    else if(ch==='万'){ total+=(sec+num)*10000; sec=0; num=0; hit=true; }
+    else if(ch==='亿'){ total=(total+sec+num)*100000000; sec=0; num=0; hit=true; }
+  }
+  return hit?(total+sec+num):null;
+}
+function push(out,buf){ const t=String(buf||'').replace(/\s+/g,' ').trim(); if(t.replace(/[^0-9A-Za-z\u3400-\u9fff]/g,'').length>=2) out.push(t); }
+function splitZh(text){
+  const out=[]; let buf='', d=0;
+  const OP='\u300a\u201c\uff08[(', CL='\u300b\u201d\uff09])';
+  const s=String(text);
+  for(let i=0;i<s.length;i++){
+    const ch=s[i]; buf+=ch;
+    if(OP.indexOf(ch)>=0) d++;
+    else if(CL.indexOf(ch)>=0) d=Math.max(0,d-1);
+    else if(d===0 && '\u3002\uff01\uff1f\uff1b'.indexOf(ch)>=0){
+      let j=i+1; while(j<s.length && (s[j]==='\u201d'||s[j]==='\u300b'||s[j]==='\uff09')) { buf+=s[j]; j++; }
+      push(out,buf); buf='';
+    }
+  }
+  push(out,buf);
+  return out;
+}
+function splitEn(text){
+  const out=[]; let buf=''; let q=false; const s=String(text);
+  for(let i=0;i<s.length;i++){
+    const ch=s[i]; buf+=ch;
+    if(ch==='\u201c'||ch==='"') q=!q;
+    else if(!q && /[.!?;]/.test(ch)){
+      let j=i+1; while(j<s.length && /\s/.test(s[j])) j++;
+      const next=s[j]||'';
+      const tok=(buf.trim().split(/\s+/).pop()||'');
+      const bare=tok.replace(/[.!?;]+$/,'').toLowerCase().replace(/[^a-z.]/g,'');
+      const single=/^[A-Z]\.?$/.test(tok);
+      const isAbbr=ABBR.has(bare)||ABBR.has(bare.replace(/\./g,''))||single;
+      const endsWithInitial=/[A-Z]\.$/.test(buf);
+      if(!isAbbr && !endsWithInitial && (next==='' || (/[A-Z\u201c"(0-9]/.test(next) && next===next.toUpperCase()))){
+        let k=j; let tail='';
+        while(k<s.length && (s[k]==='\u201d'||s[k]==='"'||s[k]==='\'')) { tail+=s[k]; k++; }
+        push(out,buf+tail); buf=''; i=k-1;
+      }
+    }
+  }
+  push(out,buf);
+  return out;
+}
+function numAnchors(s){
+  const set=new Set();
+  (String(s).match(/\d{1,4}(?:st|nd|rd|th)?/gi)||[]).forEach(x=>{ const n=x.replace(/(st|nd|rd|th)$/i,''); const v=parseInt(n,10); if(!isNaN(v)) set.add(String(v)); });
+  const words=String(s).match(/[A-Za-z]+/g)||[];
+  words.forEach(w=>{ if(MON[w]!==undefined) set.add(String(MON[w])); const k=w.toLowerCase(); if(NUMW[k]!==undefined) set.add(String(NUMW[k])); });
+  (String(s).match(/[\u3007零一二三四五六七八九十百千万亿两]{1,8}/g)||[]).forEach(x=>{ const v=cn2num(x); if(v!==null&&v>0) set.add(String(v)); });
+  if(/[\uff05%]/.test(s)) set.add('pct');
+  return set;
+}
+function latinAnchors(s){
+  const set=new Set();
+  (String(s).match(/[A-Za-z][A-Za-z.\u2019'-]{1,18}/g)||[]).forEach(w=>{
+    const k=w.toLowerCase().replace(/[^a-z]/g,'');
+    if(k.length>=3&&!FUNC.has(k)) set.add(k);
+  });
+  return set;
+}
+function featsOf(text){
+  const cjk=(String(text).match(/[\u3400-\u4dbf\u4e00-\u9fff]/g)||[]).length;
+  const words=(String(text).match(/[A-Za-z0-9\u2019'-]+/g)||[]).length;
+  return {text:text, len:(cjk||words), words:words, nums:numAnchors(text), latin:latinAnchors(text)};
+}
+function mergeFeat(list){
+  const o={text:list.map(x=>x.text).join(' '), len:0, words:0, nums:new Set(), latin:new Set()};
+  list.forEach(f=>{ o.len+=f.len; o.words+=f.words; f.nums.forEach(v=>o.nums.add(v)); f.latin.forEach(v=>o.latin.add(v)); });
+  return o;
+}
+
+/* SECTION: dp-align —— 带锚点的句级动态规划对齐
+   系数由坐标扫描在两场景联合评分下调定（无格式整块语料 gold 配对 91.7%、
+   中英双网页 8/8 探针）：长度惩罚 lp=1.2、期望比 rt=1.6（汉字/英文词）。
+   意译类词（定心丸→inject confidence into）本地只能给位置线索，需 AI 逐段抽取确认。 */
+function alignSents(zTexts,eTexts){
+  const flat=a=>a.reduce((x,y)=>x.concat(y),[]);
+  const Z=flat(zTexts.map(splitZh).filter(a=>a.length).map(a=>a.map(featsOf)));
+  const E=flat(eTexts.map(splitEn).filter(a=>a.length).map(a=>a.map(featsOf)));
+  if(!Z.length||!E.length) return {Z:Z,E:E,groups:[],zSents:Z.length,eSents:E.length,weak:0};
+  const ndf=new Map();
+  [Z,E].forEach(arr=>arr.forEach(f=>{ f.nums.forEach(v=>ndf.set(v,(ndf.get(v)||0)+1)); }));
+  const tot=Z.length+E.length, idf=new Map();
+  ndf.forEach((d,v)=>idf.set(v,Math.log(1+tot/(1+d))));
+  const n=Z.length, m=E.length, NEG=-1e9;
+  const dp=[], mv=[], sc=[];
+  for(let i=0;i<=n;i++){ dp.push(new Float64Array(m+1).fill(NEG)); mv.push(new Int8Array(m+1)); sc.push(new Float64Array(m+1).fill(0)); }
+  dp[0][0]=0;
+  const GAPZ=2.6, GAPE=2.4, MOVES=[[1,1],[1,2],[2,1],[1,3],[3,1],[2,2],[2,3],[3,2]];
+  const group=(arr,i,k)=> k===1?arr[i]:mergeFeat(arr.slice(i,i+k));
+  const pairCost=(a,b)=>{
+    let hit=0; a.nums.forEach(v=>{ if(b.nums.has(v)) hit+=(idf.get(v)||1); });
+    let lat=0; a.latin.forEach(v=>{ if(b.latin.has(v)) lat++; });
+    let pen=0;
+    if(a.nums.size+b.nums.size>=2&&hit===0) pen=2.0;
+    const ratio=a.len/Math.max(1,b.words);
+    const lp=Math.min(2.8, Math.abs(Math.log(ratio/1.6))*1.2);
+    return hit*1.6+lat*1.1-pen-lp;
+  };
+  for(let i=0;i<=n;i++) for(let j=0;j<=m;j++){
+    const cur=dp[i][j]; if(cur===NEG) continue;
+    if(i<n&&cur-GAPZ>dp[i+1][j]){ dp[i+1][j]=cur-GAPZ; mv[i+1][j]=100; }
+    if(j<m&&cur-GAPE>dp[i][j+1]){ dp[i][j+1]=cur-GAPE; mv[i][j+1]=200; }
+    for(const q of MOVES){
+      const a=q[0], b=q[1];
+      if(i+a>n||j+b>m) continue;
+      const raw=pairCost(group(Z,i,a),group(E,j,b));
+      const v=cur+raw-(a+b-2)*0.6;
+      if(v>dp[i+a][j+b]){ dp[i+a][j+b]=v; mv[i+a][j+b]=a*8+b; sc[i+a][j+b]=raw; }
+    }
+  }
+  const rev=[]; let i=n, j=m, guard=0;
+  while((i>0||j>0)&&guard++<4000){
+    const k=mv[i][j];
+    if(k===100){ rev.push({t:'z'}); i--; }
+    else if(k===200){ rev.push({t:'e'}); j--; }
+    else if(k>=9){ const a=Math.floor(k/8), b=k%8; rev.push({t:'p',a:a,b:b,s:sc[i][j]}); i-=a; j-=b; }
+    else break;
+  }
+  rev.reverse();
+  const groups=[]; let si=0, sj=0, weak=0, loose=0;
+  let preZh=[], preEn=[];
+  const weakTh=-1.0;
+  rev.forEach(st=>{
+    if(st.t==='p'){
+      const g={zi:si+1, ei:sj+1, za:st.a, eb:st.b, s:st.s,
+        zh:Z.slice(si,si+st.a).map(f=>f.text).join(' '),
+        en:E.slice(sj,sj+st.b).map(f=>f.text).join(' ')};
+      if(preZh.length){ g.zh=preZh.join(' ')+' '+g.zh; g.zi=si-preZh.length+1; g.za=st.a+preZh.length; g.loose=true; preZh=[]; }
+      if(preEn.length){ g.en=preEn.join(' ')+' '+g.en; g.ei=sj-preEn.length+1; g.eb=st.b+preEn.length; g.loose=true; preEn=[]; }
+      if(st.s<weakTh){ weak++; g.weak=true; }
+      groups.push(g); si+=st.a; sj+=st.b;
+    } else if(st.t==='z'){
+      loose++;
+      if(groups.length){ const g=groups[groups.length-1]; g.zh=g.zh+' '+Z[si].text; g.za+=1; g.loose=true; }
+      else preZh.push(Z[si].text);
+      si+=1;
+    } else {
+      loose++;
+      if(groups.length){ const g=groups[groups.length-1]; g.en=g.en+' '+E[sj].text; g.eb+=1; g.loose=true; }
+      else preEn.push(E[sj].text);
+      sj+=1;
+    }
+  });
+  if(preZh.length||preEn.length){
+    groups.unshift({zi:1, ei:1, za:preZh.length, eb:preEn.length, s:0, zh:preZh.join(' '), en:preEn.join(' '), loose:true});
+  }
+  return {Z:Z, E:E, groups:groups, zSents:n, eSents:m, weak:weak, loose:loose, score:dp[n][m]};
+}
+
+/* SECTION: fuzzy-locate —— 容忍弯直引号/大小写/空格/轻微改写的定位 */
+function normWithMap(s){
+  let n='', map=[];
+  const str=String(s);
+  for(let i=0;i<str.length;i++){
+    const c=str[i];
+    if(/\s/.test(c)){ if(n.length&&n[n.length-1]!==' '){ n+=' '; map.push(i); } continue; }
+    let t=c;
+    if(c==='\u2019'||c==='\u2018') t="'";
+    else if(c==='\u201c'||c==='\u201d') t='"';
+    else if(c==='\u2014'||c==='\u2013') t='-';
+    n+=t.toLowerCase(); map.push(i);
+  }
+  return {n:n, map:map};
+}
+function stripIdx(norm){
+  let s='', map=[];
+  for(let i=0;i<norm.length;i++){
+    const c=norm[i];
+    if(/[a-z0-9' "\-.]/.test(c)){ s+=c; map.push(i); }
+  }
+  return {s:s, map:map};
+}
+function locate(text,needle){
+  if(!needle) return null;
+  const A=normWithMap(text);
+  const B=normWithMap(String(needle).replace(/^[\s"'“”‘’(\[]+|[\s"'“”‘’)\].,;:!?\u2014-]+$/g,''));
+  if(!B.n.length) return null;
+  let s=A.n.indexOf(B.n);
+  if(s>=0) return [A.map[s], A.map[s+B.n.length-1]+1];
+  const AS=stripIdx(A.n), BS=stripIdx(B.n);
+  s=AS.s.indexOf(BS.s);
+  if(s>=0){ const a=AS.map[BS.map[s]], b=AS.map[BS.map[s+BS.s.length-1]]; return [A.map[a], A.map[b]+1]; }
+  const nw=B.n.split(' ').filter(Boolean);
+  if(nw.length>=2){
+    const toks=[]; const re=/\S+/g; let mm;
+    while((mm=re.exec(String(text)))) toks.push({t:normWithMap(mm[0]).n.replace(/[^a-z0-9' -]/g,''), s:mm.index, e:mm.index+mm[0].length});
+    let best=null;
+    for(let w=Math.max(2,nw.length-2); w<=nw.length+2&&w<=toks.length; w++){
+      for(let i=0;i+w<=toks.length;i++){
+        let hit=0;
+        const win=toks.slice(i,i+w).map(x=>x.t);
+        nw.forEach(q=>{ if(win.indexOf(q)>=0) hit++; });
+        const r=hit/nw.length;
+        if(!best||r>best.r) best={r:r,i:i,w:w};
+      }
+    }
+    if(best&&best.r>=0.75&&nw.length>=3) return [toks[best.i].s, toks[best.i+best.w-1].e];
+  }
+  return null;
+}
+function rangesMulti(text,groups){
+  const out=[];
+  (groups||[]).forEach((g,gi)=>{
+    (g.list||[]).forEach(nd=>{
+      if(!nd) return;
+      const r=locate(text,nd); if(!r) return;
+      let seg={s:r[0],e:r[1],cls:g.cls};
+      let clash=false;
+      for(const o of out){
+        if(seg.s<o.e && o.s<seg.e){
+          clash=true;
+          if(gi===0 && o.cls!==seg.cls){ o.s=Math.min(o.s,seg.s); o.e=Math.max(o.e,seg.e); }
+          break;
+        }
+      }
+      if(!clash) out.push(seg);
+    });
+  });
+  out.sort((a,b)=>a.s-b.s);
+  const merged=[];
+  out.forEach(x=>{ const last=merged[merged.length-1];
+    if(last&&x.s<=last.e){ last.e=Math.max(last.e,x.e); } else merged.push(x); });
+  return merged;
+}
+function highlightMulti(node,text,ranges){
+  node.textContent=''; let pos=0;
+  (ranges||[]).forEach(r=>{
+    if(r.s<pos) return;
+    if(r.s>pos) node.appendChild(document.createTextNode(text.slice(pos,r.s)));
+    node.appendChild(el('mark',r.cls,text.slice(r.s,r.e)));
+    pos=r.e;
+  });
+  if(pos<text.length) node.appendChild(document.createTextNode(text.slice(pos)));
+}
+function nearWindow(text,phrase){
+  if(!phrase) return null;
+  const need=String(phrase).split(/\s+/).map(w=>w.toLowerCase().replace(/[^a-z0-9'\u2019-]/g,'')).filter(w=>w.length>2&&!FUNC.has(w)).slice(0,4);
+  if(need.length<2) return null;
+  const toks=[]; const re=/\S+/g; let mm;
+  while((mm=re.exec(String(text)))) toks.push({t:mm[0].toLowerCase().replace(/[^a-z0-9' \u2019.-]/g,''),s:mm.index,e:mm.index+mm[0].length});
+  const req=Math.max(2,Math.ceil(need.length*0.66));
+  let best=null;
+  for(let i=0;i<toks.length;i++){
+    if(toks[i].t!==need[0]) continue;
+    let k=1, last=i;
+    const lim=Math.min(toks.length-1, i+10);
+    for(let j=i+1;j<=lim;j++){
+      if(k<need.length && toks[j].t===need[k]){ k++; last=j; }
+      if(k>=need.length) break;
+    }
+    if(k<req) continue;
+    if(!best||k>best.k) best={k:k,s:toks[i].s,e:toks[last].e};
+    if(best.k>=need.length) break;
+  }
+  if(!best) return null;
+  let te=best.e;
+  while(te>best.s && /[\s.,;:!?\u2014\u2013)\]]/.test(String(text)[te-1])) te--;
+  return [best.s,te];
+}
+function enRanges(u,terms){
+  const g=enGroups(u,terms);
+  let rs=rangesMulti(u.en,g);
+  if(!rs.length){
+    const pool=g[0].list.concat(g[1].list);
+    for(const ph of pool){
+      const w=nearWindow(u.en,ph);
+      if(w){ rs=[{s:w[0],e:w[1],cls:'weak'}]; break; }
+    }
+  }
+  return rs;
+}
+function enGroups(u,terms){
+  const g=[{list:[],cls:'en2'},{list:[],cls:'mid'},{list:[],cls:'weak'}];
+  terms.forEach(t=>{ if(!/[\u3400-\u9fff]/.test(t)) g[0].list.push(t); });
+  glossFor(terms[0]||'').forEach(x=>g[0].list.push(x.en));
+  const ck=(terms||[]).join('、');
+  (u.ai||[]).forEach(a=>{ if(a.en&&a.en!=='NONE'&&a.term===ck) g[0].list.push(a.en); });
+  if(lastVerdict){ g[1].list.push(lastVerdict.best); (lastVerdict.alts||[]).forEach(a=>g[1].list.push(a.en)); }
+  if(!g[0].list.length&&!g[1].list.length){ const sp=extractSpecial([{u:u}]).slice(0,3); sp.forEach(x=>g[2].list.push(x.disp)); if(!sp.length){ const h2=u.en.match(/[\u201c"][^\u201d"]{2,40}[\u201d"]/); if(h2) g[2].list.push(h2[0]); } }
+  return g;
+}
+function renderLegend(box){
+  const lg=el('div','mark-lg');
+  [['en2','已确认 · 术语库或 AI 抽取'],['mid','判定译法 · 来自上方结论'],['weak','定位线索 · 需人工核对']].forEach(p=>{
+    const s=el('span','lg'); const i=el('i'); i.className=p[0];
+    s.appendChild(i); s.appendChild(document.createTextNode(p[1])); lg.appendChild(s);
+  });
+  box.appendChild(lg);
+}
+function rangesFor(text,needles){
+  const rs=[];
+  (needles||[]).forEach(nd=>{ const r=locate(text,nd); if(r) rs.push(r); });
+  rs.sort((a,b)=>a[0]-b[0]);
+  const out=[];
+  rs.forEach(r=>{ if(out.length&&r[0]<=out[out.length-1][1]) out[out.length-1][1]=Math.max(out[out.length-1][1],r[1]); else out.push([r[0],r[1]]); });
+  return out;
+}
+
+/* SECTION: webtext —— 解析另存网页 / 混排文本按语言切分 */
+const WEB_BAD=/版权所有|网站标识码|ICP备|京公网安备|邮编[：:]|All Rights Reserved|Copyright ?[©Ⓒ]|返回顶部|主办[：:]|承办[：:]|技术支持|京ICP备|网站访问量/;
+function menuLike(x){
+  const parts=x.split(/[\s\u3000|·\/、]+/).filter(Boolean);
+  if(parts.length<4) return false;
+  const short=parts.filter(w=>w.length<=4).length;
+  return short/parts.length>=0.75;
+}
+function htmlToParagraphs(htmlText){
+  const doc=new DOMParser().parseFromString(String(htmlText),'text/html');
+  Array.from(doc.querySelectorAll('script,style,noscript,iframe,nav,header,footer,form')).forEach(e=>e.remove());
+  const out=[];
+  Array.from(doc.querySelectorAll('p,li,td,blockquote,div,h1,h2,h3,pre')).forEach(b=>{
+    if(b.querySelector('p,li,td,blockquote,div,h1,h2,h3,pre')) return;
+    let x=b.textContent||'';
+    x=x.replace(/[\t\r\u00a0\u3000]+/g,' ').replace(/\s*\n\s*/g,' ').replace(/\s+/g,' ').trim();
+    if(x.length<22||WEB_BAD.test(x)||menuLike(x)) return;
+    const c=(x.match(/[\u3400-\u9fff]/g)||[]).length, l=(x.match(/[A-Za-z]/g)||[]).length;
+    if(k==='ZH'&&c<8) return;
+    if(k==='EN'&&l<12) return;
+    if(k==='ZH'||k==='EN') out.push(x);
+  });
+  return out;
+}
+function htmlTitle(htmlText){
+  const m=String(htmlText).match(/<title[^>]*>([\s\S]*?)<\/title>/i);
+  return m?m[1].replace(/\s+/g,' ').trim():'';
+}
+function langSplit(text){
+  const zh=[], en=[]; const s=String(text);
+  let buf='', cur='';
+  const flush=()=>{
+    const t=buf.replace(/\s+/g,' ').trim(); buf='';
+    if(!t) return;
+    const k=kindOf(t);
+    if(k==='ZH') zh.push(t); else if(k==='EN') en.push(t);
+  };
+  for(let i=0;i<s.length;i++){
+    const ch=s[i];
+    const isCjk=/[\u3400-\u4dbf\u4e00-\u9fff]/.test(ch);
+    const isLat=/[A-Za-z]/.test(ch);
+    if(!isCjk&&!isLat){ buf+=ch; continue; }
+    const k=isCjk?'ZH':'EN';
+    if(cur&&cur!==k) flush();
+    cur=k; buf+=ch;
+  }
+  flush();
+  return {zh:zh, en:en};
+}
+function toSources(text){
+  const t=String(text).trim();
+  if(!t) return {zh:[],en:[]};
+  const lines=t.split(/\n\s*\n|\n/).map(s=>s.replace(/\s+/g,' ').trim()).filter(s=>s.length>15);
+  const use=lines.length?lines:[t];
+  const zh=[], en=[];
+  use.forEach(b=>{
+    const k=kindOf(b);
+    const cjk=(b.match(/[\u4e00-\u9fff]/g)||[]).length, lat=(b.match(/[A-Za-z]/g)||[]).length;
+    const mixed=(cjk>25&&lat>cjk*0.35);
+    if(mixed){ const r=langSplit(b); r.zh.forEach(x=>zh.push(x)); r.en.forEach(x=>en.push(x)); }
+    else if(k==='ZH') zh.push(b);
+    else if(k==='EN') en.push(b);
+    else { const r=langSplit(b); r.zh.forEach(x=>zh.push(x)); r.en.forEach(x=>en.push(x)); }
+  });
+  return {zh:zh, en:en};
+}
+async function fetchWeb(url,proxy){
+  const tryList=[];
+  tryList.push(url);
+  if(proxy) tryList.push((/\/$/.test(proxy)?proxy:proxy+'/')+url);
+  let lastErr=null;
+  for(const u of tryList){
+    try{
+      const r=await fetch(u,{credentials:'omit'});
+      if(!r.ok){ lastErr=new Error('HTTP '+r.status); continue; }
+      return await r.text();
+    }catch(e){ lastErr=e; }
+  }
+  throw new Error((lastErr&&lastErr.message)||'无法访问');
+}
+
+/* SECTION: search */
+function queries(raw){
+  const parts=raw.split(/[,，、;；\n]+|\s{2,}/).map(s=>s.trim()).filter(Boolean);
+  const list=($('optMulti').checked && parts.length>1)?parts:(raw.trim()?[raw.trim()]:[]);
+  return list.length?list:[raw.trim()].filter(Boolean);
+}
+function matchUnit(u,terms,mode){
+  const hit=[]; let all=true;
+  for(const t of terms){
+    const inZh=u.zh.indexOf(t)>=0, inEn=u.en.toLowerCase().indexOf(t.toLowerCase())>=0;
+    if(inZh||inEn) hit.push({t:t,zh:inZh,en:inEn});
+    else all=false;
+  }
+  return (mode==='and')?{ok:all&&hit.length>0,hit:hit}:{ok:hit.length>0,hit:hit};
+}
+function runSearch(){
+  const raw=$('q').value.trim();
+  lastAI=null;
+  if(!raw){ toast('先输入要查的中文词'); return; }
+  if(!corpus.length){ toast('还没有语料，先导入文件或载入内置示例'); return; }
+  const terms=queries(raw); lastTerms=terms;
+  const browse=!$('optWhole').checked;
+  const units=browse?allUnits():candidateUnits(terms);
+  const hits=[];
+  for(const u of units){ const m=matchUnit(u,terms,'and'); if(browse||m.ok) hits.push({u:u,hit:m.hit}); }
+  if(browse) hits.length=Math.min(hits.length,120);
+  if(browse) $('modeTag').textContent='浏览全部对照（未过滤）'; else updateModeTag();
+  hits.sort((a,b)=>(b.hit.length-a.hit.length)||(a.u.file.localeCompare(b.u.file))||(a.u.idx-b.u.idx));
+  lastHits=hits;
+  pushRecent(raw);
+  renderGlossHits(terms);
+  renderSummary(hits,terms);
+  lastVerdict=null;
+  if(!browse&&hits.length) lastVerdict=decide(hits,terms);
+  renderResults(hits,terms);
+  if(browse){ $('candBox').hidden=true; $('verdict').hidden=true; return; }
+  renderCandidates(hits,terms);
+  renderVerdict();
+  if(cfg.autoAI){
+    if(!cfg.key){ toast('已开启自动辅助查询，但还没填 API Key（设置里填）'); }
+    else { const todo=hits.filter(h=>!h.u.ai&&!isLocalOnly(h.u.file)); if(todo.length) runAIAll(todo); }
+  }
+  if(!hits.length&&!browse){ toast('没找到包含这些词的对照段落，可换个更短的词试试'); }
+}
+
+/* SECTION: summary */
+function renderSummary(hits,terms){
+  const box=$('summary'); box.hidden=false;
+  $('hitCount').textContent=hits.length;
+  const byFile={};
+  hits.forEach(h=>{ byFile[h.u.file]=(byFile[h.u.file]||0)+1; });
+  const keys=Object.keys(byFile);
+  const sp=$('fileSpread'); sp.textContent='';
+  keys.sort((a,b)=>byFile[b]-byFile[a]).slice(0,6).forEach((k,i)=>{
+    if(i) sp.appendChild(document.createTextNode(' · '));
+    const s=el('span'); s.textContent=k.slice(0,16)+' '+byFile[k]; s.title=k; sp.appendChild(s);
+  });
+  if(keys.length>6) sp.appendChild(el('span',null,' 等 '+keys.length+' 个文件'));
+  const anyRemote=hits.some(h=>!isLocalOnly(h.u.file));
+  updateModeTag();
+  $('btnAI').hidden=!($('optAI').checked);
+  $('btnCopyPrompt').hidden=!($('optAI').checked);
+  if(!anyRemote&&hits.length){
+    $('btnAI').disabled=true; $('btnCopyPrompt').disabled=true;
+    $('btnAI').title='命中的语料均标记为「仅限本地」，已禁用 API 调用';
+    $('btnCopyPrompt').title='命中的语料均标记为「仅限本地」，已禁止导出给外部 AI';
+  }else{
+    $('btnAI').disabled=false; $('btnCopyPrompt').disabled=false;
+    $('btnAI').title=''; $('btnCopyPrompt').title='';
+  }
+}
+
+/* SECTION: candidates —— 跨命中段共现 n-gram，无 AI 也能给方向 */
+const FUNC=new Set(('a an the and or but if so as of to in on at for with by from that this these those it its their our your his her he she we they i you is are was were be been being will would shall should can could may might must have has had do does did not no also more most such both among between including while when where which what how than then there here about into onto over under after before during since up down out off very too just only even still yet thus therefore however though').split(' '));
+function innerFunc(w){ let n=0; for(let i=1;i<w.length-1;i++) if(FUNC.has(w[i].toLowerCase())) n++; return n; }
+function termScore(w){
+  const n=w.length;
+  if(FUNC.has(w[0].toLowerCase())) return -1;
+  if(n>1 && FUNC.has(w[n-1].toLowerCase())) return -1;
+  const bad=innerFunc(w);
+  if(bad>Math.floor(n/3)) return -1;
+  return n*10+4-bad*3;
+}
+function collectGrams(list){
+  const stat=new Map();
+  list.forEach(h=>{
+    const seen=new Set();
+    const words=h.u.en.split(/(?<=[.,;:!?])\s+|\s+/).map(w=>w.replace(/^["'\u201c\u2018(\[\u2014\u2013-]+|["'\u201d\u2019)\].,;:!?\u2014\u2013-]+$/g,'')).filter(Boolean);
+    for(let n=1;n<=4;n++){
+      for(let i=0;i+n<=words.length;i++){
+        const g=words.slice(i,i+n), s=g.join(' ');
+        if(s.length<3||s.length>52) continue;
+        if(!/[A-Za-z]/.test(s)) continue;
+        const sc=termScore(g); if(sc<0) continue;
+        const key=s.toLowerCase();
+        if(seen.has(key)) continue; seen.add(key);
+        let rec=stat.get(key);
+        if(!rec){ rec={disp:s,df:0,n:n,score:sc}; stat.set(key,rec); }
+        rec.df++;
+      }
+    }
+  });
+  return stat;
+}
+let bgCache=null,bgKey='';
+function background(){
+  const key=corpus.map(f=>f.name+':'+f.units.length).join('|');
+  if(bgCache&&bgKey===key) return bgCache;
+  bgKey=key; bgCache=allUnits().slice(0,1500).map(u=>({u:u}));
+  return bgCache;
+}
+function ngrams(hits){
+  const g=collectGrams(hits), bg=collectGrams(background()), bgTotal=Math.max(1,background().length);
+  const arr=[];
+  for(const [k,r] of g){
+    const gd=bg.has(k)?bg.get(k).df:0;
+    if(!gd) continue;
+    const ratio=r.df/gd;
+    if(r.df>=2){ if(ratio<0.5) continue; }
+    else { if(ratio<1||r.n>3) continue; }
+    if(r.n===1&&!/^[A-Z]/.test(r.disp)&&!(r.disp.length>=5&&r.df>=2)) continue;
+    const common=gd/bgTotal>0.45;
+    arr.push({disp:r.disp,df:r.df,n:r.n,score:r.score,ratio:ratio,
+      rank:r.df*(0.35+0.65*ratio)*(common?0.45:1)});
+  }
+  arr.sort((a,b)=>(b.rank-a.rank)||(a.n-b.n));
+  const out=[];
+  for(const r of arr){
+    const low=r.disp.toLowerCase(); let done=false;
+    for(let k=0;k<out.length;k++){
+      const o=out[k], ol=o.disp.toLowerCase();
+      if(ol===low) { done=true; break; }
+      if(ol.indexOf(low)>=0){ if(r.df>o.df){ out[k]=r; } done=true; break; }
+      if(low.indexOf(ol)>=0 && r.df>=o.df && r.n>o.n){ out[k]=r; done=true; break; }
+    }
+    if(done) continue;
+    out.push(r); if(out.length>=12) break;
+  }
+  return out.filter(r=>r.df>=2);
+}
+
+function extractSpecial(hits){
+  const map=new Map();
+  const add=(s,kind)=>{
+    s=String(s).trim().replace(/^[\s,;:!.]+|[\s,;:!.]+$/g,'');
+    if(s.length<2||s.length>56) return;
+    const ws=s.split(/\s+/);
+    if(FUNC.has(ws[0].toLowerCase())) return;
+    if(ws.length>1&&FUNC.has(ws[ws.length-1].toLowerCase())) return;
+    const k=s.toLowerCase(); let r=map.get(k);
+    if(!r){ r={disp:s,df:0,kind:kind}; map.set(k,r); }
+    r.df++;
+  };
+  hits.forEach(h=>{
+    const en=h.u.en;
+    (en.match(/[\u201c"]([^\u201d"]{2,56})[\u201d"]/g)||[]).forEach(x=>add(x.replace(/^[\u201c"]|[\u201d"]$/g,''),'引号内'));
+    (en.match(/\b(?:a|an)\s+[A-Za-z][A-Za-z\u2019\-]*(?:\s+[A-Za-z][A-Za-z\u2019\-]*){0,2}/gi)||[]).forEach(x=>add(x,'a/an 短语'));
+    const first=en.trim().split(/\s+/)[0];
+    (en.match(/\b[A-Z][A-Za-z\u2019.\-]+(?:\s+[A-Z][A-Za-z\u2019.\-]+){0,2}\b/g)||[]).forEach((x,i)=>{
+      if(i===0&&x.split(/\s+/)[0]===first) return;
+      if(FUNC.has(x.split(/\s+/)[0].toLowerCase())) return;
+      add(x,'大写术语');
+    });
+  });
+  return [...map.values()].sort((a,b)=>b.df-a.df).slice(0,12);
+}
+function renderChips(list,onClick){
+  const wrap=$('cands'); wrap.textContent='';
+  list.forEach((c,i)=>{
+    const b=el('button','cand'+(i===0?' top':'')); b.type='button';
+    b.appendChild(el('span',null,c.disp));
+    b.appendChild(el('span','df',c.meta||''));
+    if(c.tip) b.title=c.tip;
+    b.addEventListener('click',()=>onClick(c));
+    wrap.appendChild(b);
+  });
+}
+function renderCandidates(hits,terms){
+  const box=$('candBox'), note=$('candNote'), head=box.querySelector('.lab');
+  $('cands').textContent=''; note.textContent='';
+  box.hidden=true; if(!hits.length) return;
+  const cands=ngrams(hits), cross=cands;
+  if(cross.length){
+    box.hidden=false;
+    head.textContent='候选译法 · 共现统计（已用全语料做背景剔除泛词，按覆盖段落数排序）';
+    renderChips(cands.map(c=>({disp:c.disp,meta:c.df+'段/'+c.freq+'次',tip:'出现在 '+c.df+' 个对照单元，共 '+c.freq+' 次',en:c.disp})),c=>saveFromCand(c.en,terms,hits));
+    note.textContent='有 '+cross.length+' 个短语在 2 段以上重复、且集中出现在本次命中段落里，越靠前越可能是这批文件的固定译法（China、development 这类满篇都有的泛词已被剔除）。点候选可直接存入术语库。';
+  }else{
+    const spec=extractSpecial(hits);
+    if(!spec.length) return;
+    box.hidden=false;
+    head.textContent='定位线索 · 本地启发式（引号内容 / a·an 短语 / 大写词）——只是帮你锁定英文里的位置，不等于译法结论';
+    renderChips(spec.map(c=>({disp:c.disp,meta:c.kind+(c.df>1?' ×'+c.df:''),tip:'来源：'+c.kind+'，未经多段交叉验证，请人工核对后再入库',en:c.disp})),c=>saveFromCand(c.en,terms,hits));
+    note.textContent='本次命中不足 2 段共有短语，无法交叉验证。像「定心丸 → inject confidence into」这类不带引号、不大写的官方译法，只能靠 AI 抽取或人工核对得出——建议点上方「AI 精确抽取全部命中」。';
+  }
+}
+function saveFromCand(en,terms,hits){
+  const zh=terms.join('、');
+  const src=hits.length?(hits[0].u.file+' · 第'+hits[0].u.idx+'组'):'';
+  confirmAddGloss(zh,en,src,'共现统计候选');
+}
+
+/* SECTION: results */
+function highlight(node,text,needles,cls){
+  node.textContent='';
+  const ranges=rangesFor(text,needles);
+  let pos=0;
+  ranges.forEach(r=>{
+    if(r[0]<pos) return;
+    if(r[0]>pos) node.appendChild(document.createTextNode(text.slice(pos,r[0])));
+    node.appendChild(el('mark',cls||'',text.slice(r[0],r[1])));
+    pos=r[1];
+  });
+  if(pos<text.length) node.appendChild(document.createTextNode(text.slice(pos)));
+}
+let openSet=new Set();
+const FOLD_EM='6.8em';
+function half(tag,text,needles,cls,long,key){
+  const h=el('div','half'+(tag==='en'?' en':' zh'));
+  h.appendChild(el('div','tag',tag==='en'?'EN 英文原文':'ZH 中文原文'));
+  const t=el('div','txt'+(long?' clip':''));
+  if(long){ t.classList.add('fade'); }
+  if(needles&&needles.length&&needles[0]&&needles[0].cls!==undefined) highlightMulti(t,text,needles);
+  else if(needles&&needles.length&&needles[0]&&needles[0].list!==undefined) highlightMulti(t,text,rangesMulti(text,needles));
+  else highlight(t,text,needles,cls);
+  h.appendChild(t);
+  const k=(key||'')+'|'+tag;
+  if(long){
+    if(openSet.has(k)){ t.classList.add('open'); t.classList.remove('fade'); t.style.maxHeight='none'; }
+    else t.style.maxHeight=FOLD_EM;
+    const b=el('button','more',openSet.has(k)?'收起':'展开全文'); b.type='button';
+    b.addEventListener('click',ev=>{
+      ev.stopPropagation();
+      if(openSet.has(k)){ openSet.delete(k); t.classList.remove('open'); t.classList.add('fade'); t.style.maxHeight=FOLD_EM; b.textContent='展开全文'; }
+      else { openSet.add(k); t.classList.add('open'); t.classList.remove('fade'); t.style.maxHeight='none'; b.textContent='收起'; }
+    });
+    h.appendChild(b);
+  }
+  return h;
+}
+function glossaryUnitsFor(g){
+  const out=[];
+  corpus.forEach(f=>{
+    if(out.length>=3) return;
+    f.units.forEach(u=>{ if(out.length<3 && u.zh && g.zh && u.zh.indexOf(g.zh)>=0) out.push({file:f.name,unit:u}); });
+  });
+  return out;
+}
+function glossPageStyle(){
+  return 'body{font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;max-width:980px;margin:26px auto;padding:0 18px;line-height:1.7;color:#15202b;background:#f5f7fa}'
+   +'h1{font-size:20px;margin:0 0 4px}p.sub{font-size:12.5px;color:#5d6b7a;margin:0 0 14px}'
+   +'div.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 12px}'
+   +'button{border:1px solid #d8dee7;background:#fff;border-radius:8px;padding:6px 12px;font-size:13px;cursor:pointer;color:#1b4d8c}'
+   +'button:hover{border-color:#1b4d8c}button.danger{color:#a12b2b;border-color:#e2c7c7}button.mini{padding:3px 9px;font-size:12px}'
+   +'input.q,input.f{flex:1 1 150px;min-width:0;padding:7px 10px;border:1px solid #d8dee7;border-radius:8px;font-size:13px}'
+   +'div#form{background:#fff;border:1px solid #cfe0f5;border-radius:12px;padding:12px 14px;margin:0 0 12px;box-shadow:0 0 0 3px #eaf1fa}'
+   +'div#form .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px}'
+   +'div#form label{font-size:12px;color:#7b8794;display:block;margin:6px 0 3px}'
+   +'div.card{background:#fff;border:1px solid #e2e7ee;border-radius:12px;padding:11px 14px;margin:8px 0}'
+   +'div.head{display:flex;flex-wrap:wrap;gap:9px;align-items:center}'
+
+   +'b.zh{font-size:16px;line-height:1.4}span.arw{color:#9aa7b4}span.en{color:#1b4d8c;font-family:Georgia,"Times New Roman",serif;font-size:16px}'
+   +'span.spacer{flex:1 1 auto}'
+   +'div.srcline{font-size:11.5px;color:#7b8794;margin:8px 0 6px;padding-top:8px;border-top:1px dashed #e2e7ee}'
+   +'div.ctx{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;margin-top:6px}'
+   +'@media(max-width:760px){div.ctx{grid-template-columns:minmax(0,1fr)}}'
+   +'div.ctx div.cell{font-size:13px;min-width:0}div.ctx .l2{font-size:10.5px;color:#7b8794;margin-bottom:2px}'
+   +'mark{background:#ffe9a8;border-radius:3px}mark.g{background:#c9e8d4}'
+   +'div.empty{color:#7b8794;font-size:13.5px;padding:26px;text-align:center;background:#fff;border:1px dashed #e2e7ee;border-radius:12px}'
+   +'div.tip{font-size:11.5px;color:#8a97a5;margin:2px 0 12px}';
+}
+function buildGlossaryPage(){
+  const d=document.implementation.createHTMLDocument('本地术语库');
+  const st=d.createElement('style'); st.textContent=glossPageStyle(); d.head.appendChild(st);
+
+  const h1=d.createElement('h1'); h1.textContent='本地术语库'; d.body.appendChild(h1);
+  const sub=d.createElement('p'); sub.className='sub';
+  sub.textContent='共 '+glossary.length+' 条　·　保存在你本机'+'　·　'+new Date().toLocaleString();
+  d.body.appendChild(sub);
+
+  const bar=d.createElement('div'); bar.className='bar';
+  const qt=d.createElement('input'); qt.className='q'; qt.id='q'; qt.placeholder='按中文或英文筛选…'; bar.appendChild(qt);
+  const bAdd=d.createElement('button'); bAdd.textContent='＋ 新增词条'; bar.appendChild(bAdd);
+  const bExp=d.createElement('button'); bExp.textContent='导出 CSV'; bar.appendChild(bExp);
+  const bCopy=d.createElement('button'); bCopy.textContent='复制术语库 JSON'; bar.appendChild(bCopy);
+  d.body.appendChild(bar);
+  const sync=d.createElement('div'); sync.className='tip'; sync.id='syncStat';
+  sync.textContent='增删改会自动尝试同步回主页面。';
+  d.body.appendChild(sync);
+
+  const form=d.createElement('div'); form.id='form'; form.hidden=true;
+  const ft=d.createElement('div'); ft.id='formTitle'; ft.style.fontSize='13.5px'; ft.style.fontWeight='650'; ft.textContent='新增词条'; form.appendChild(ft);
+  const l1=d.createElement('label'); l1.textContent='中文词'; form.appendChild(l1);
+  const izh=d.createElement('input'); izh.className='f'; izh.id='fzh'; izh.placeholder='例如：定心丸'; form.appendChild(izh);
+  const l2=d.createElement('label'); l2.textContent='英文译法'; form.appendChild(l2);
+  const ien=d.createElement('input'); ien.className='f'; ien.id='fen'; ien.placeholder='例如：inject confidence into'; form.appendChild(ien);
+  const l3=d.createElement('label'); l3.textContent='出处（可留空）'; form.appendChild(l3);
+  const isrc=d.createElement('input'); isrc.className='f'; isrc.id='fsrc'; isrc.placeholder='例如：2026.11.20记者会 · 第6组'; form.appendChild(isrc);
+  const frow=d.createElement('div'); frow.className='row';
+  const bSave=d.createElement('button'); bSave.id='fsave'; bSave.textContent='保存'; frow.appendChild(bSave);
+  const bCancel=d.createElement('button'); bCancel.id='fcancel'; bCancel.textContent='取消'; frow.appendChild(bCancel);
+  form.appendChild(frow);
+  d.body.appendChild(form);
+
+  const list=d.createElement('div'); list.id='list'; d.body.appendChild(list);
+  const tip=d.createElement('div'); tip.className='tip'; tip.textContent='默认只显示词条与「原文」按钮，点开才看完整出处与中英段落。增删改会立即同步回主页面。'; d.body.appendChild(tip);
+
+  const data={glossary:glossary.map(g=>({zh:g.zh,en:g.en,src:g.src||'',note:g.note||'',ts:g.ts||0})),units:{}};
+  glossary.forEach(g=>{
+    data.units[g.zh+'@@'+g.en]=glossaryUnitsFor(g).map(x=>({file:x.file,idx:x.unit.idx,zh:x.unit.zh,en:x.unit.en}));
+  });
+
+  const sd=d.createElement('script'); sd.type='application/json'; sd.id='data'; sd.textContent=JSON.stringify(data); d.body.appendChild(sd);
+
+  const app=d.createElement('script');
+  app.textContent = String.raw`
+(function(){
+  var D=JSON.parse(document.getElementById('data').textContent);
+  var list=D.glossary.slice();
+  var units=D.units;
+  var editIdx=-1;
+  function $(id){ return document.getElementById(id); }
+  function el(tag,cls,txt){ var n=document.createElement(tag); if(cls) n.className=cls; if(txt!==undefined&&txt!==null) n.textContent=txt; return n; }
+  function persist(){
+    var ok=false;
+    try{ localStorage.setItem('cn2en.glossary.v1', JSON.stringify(list)); }catch(e){}
+    try{
+      var rq=indexedDB.open('cn2en-lib',1);
+      rq.onupgradeneeded=function(){ try{ rq.result.createObjectStore('kv'); }catch(e){} };
+      rq.onsuccess=function(){ try{ var db=rq.result; var tx=db.transaction('kv','readwrite'); tx.objectStore('kv').put(list,'glossary'); }catch(e){} };
+    }catch(e){}
+    try{ if(window.opener&&!window.opener.closed){ window.opener.postMessage({type:'cn2en-glossary',data:list},'*'); ok=true; } }catch(e){}
+    try{
+      if(window.BroadcastChannel){
+        var bc=new BroadcastChannel('cn2en-gloss');
+        bc.postMessage({type:'cn2en-glossary',data:list}); bc.close(); ok=true;
+      }
+    }catch(e){}
+    var st=document.getElementById('syncStat');
+    if(st) st.textContent = ok
+      ? ('已同步到主页面（'+list.length+' 条）')
+      : ('改动已存在本机（'+list.length+' 条）。若主页面没有更新，点「复制术语库 JSON」，回主页面在设置里粘贴应用。');
+  }
+  function copyJson(){
+    var txt=JSON.stringify(list);
+    function fb(){
+      var ta=document.createElement('textarea'); ta.value=txt;
+      ta.style.position='fixed'; ta.style.left='-9999px';
+      document.body.appendChild(ta); ta.select();
+      var ok=false; try{ ok=document.execCommand('copy'); }catch(e){}
+      ta.remove();
+      var st=document.getElementById('syncStat');
+      if(st) st.textContent = ok? '已复制术语库 JSON，回主页面「设置 → 应用粘贴的术语库」' : '复制被浏览器拒绝，请手动选择文本复制';
+    }
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(function(){
+        var st=document.getElementById('syncStat');
+        if(st) st.textContent='已复制术语库 JSON，回主页面「设置 → 应用粘贴的术语库」';
+      }).catch(fb);
+    }else fb();
+  }
+  function csvText(){
+    var rows=[['中文','英文译法','出处','备注','时间']];
+    list.forEach(function(g){ rows.push([g.zh,g.en,g.src||'',g.note||'',g.ts?new Date(g.ts).toLocaleString():'']); });
+    return '\ufeff'+rows.map(function(r){ return r.map(function(c){ c=String(c==null?'':c); return /[",\n]/.test(c)?'"'+c.replace(/"/g,'""')+'"':c; }).join(','); }).join('\r\n');
+  }
+  function markInto(node,text,term,green){
+    var t=term?String(term):'';
+    if(!t){ node.textContent=text; return; }
+    var low=text.toLowerCase(), tl=t.toLowerCase(), pos=0, from=0;
+    while(true){
+      var k=low.indexOf(tl,from);
+      if(k<0) break;
+      if(k>pos) node.appendChild(document.createTextNode(text.slice(pos,k)));
+      var mk=document.createElement('mark'); if(green) mk.className='g'; mk.textContent=text.slice(k,k+t.length);
+      node.appendChild(mk); pos=k+t.length; from=k+t.length;
+    }
+    if(pos<text.length) node.appendChild(document.createTextNode(text.slice(pos)));
+  }
+  function openForm(g){
+    editIdx = g? list.indexOf(g) : -1;
+    $('formTitle').textContent = g? '修改词条' : '新增词条';
+    $('fzh').value = g? g.zh : ''; $('fen').value = g? g.en : ''; $('fsrc').value = g? (g.src||'') : '';
+    $('form').hidden=false; $('fzh').focus();
+  }
+  function saveForm(){
+    var zh=($('fzh').value||'').trim(), en=($('fen').value||'').trim(), src=($('fsrc').value||'').trim();
+    if(!zh||!en){ alert('中文和英文都要填'); return; }
+    if(editIdx>=0){
+      var g=list[editIdx]; g.zh=zh; g.en=en; g.src=src; g.ts=Date.now();
+    }else{
+      for(var i=0;i<list.length;i++){ if(list[i].zh===zh&&list[i].en===en){ alert('已存在相同的词条'); return; } }
+      list.unshift({zh:zh,en:en,src:src,note:'手动添加',ts:Date.now()});
+    }
+    $('form').hidden=true; editIdx=-1;
+    persist(); render();
+  }
+  function cardFor(g){
+    var wrap=el('div','card');
+    var head=el('div','head');
+    head.appendChild(el('b','zh',g.zh));
+    head.appendChild(el('span','arw','→'));
+    head.appendChild(el('span','en',g.en));
+    head.appendChild(el('span','spacer'));
+    var bp=el('button','mini','原文'); bp.type='button';
+    var be=el('button','mini','改'); be.type='button';
+    var bd=el('button','mini danger','×'); bd.type='button'; bd.title='删除词条';
+    head.appendChild(bp); head.appendChild(be); head.appendChild(bd);
+    wrap.appendChild(head);
+    var box=el('div'); box.hidden=true;
+    var us=units[g.zh+'@@'+g.en]||[];
+    box.appendChild(el('div','srcline','出处：'+(g.src||(us.length? (us[0].file+' · 第'+us[0].idx+'组') : '未记录'))));
+    if(!us.length){
+      box.appendChild(el('div','srcline','当前语料里没找到与该词对应的段落（可能已删除该文件）'));
+    }
+    us.forEach(function(it){
+      var ctx=el('div','ctx');
+      ['zh','en'].forEach(function(side){
+        var cell=el('div','cell');
+        cell.appendChild(el('div','l2',(side==='zh'?'ZH ':'EN ')+it.file+' · 第'+it.idx+'组'));
+        var tx=el('div');
+        markInto(tx, it[side]||'', side==='zh'? g.zh : g.en, side==='en');
+        cell.appendChild(tx); ctx.appendChild(cell);
+      });
+      box.appendChild(ctx);
+    });
+    bp.onclick=function(){ box.hidden=!box.hidden; bp.textContent = box.hidden? '原文' : '收起原文'; };
+    be.onclick=function(){ openForm(g); };
+    bd.onclick=function(){
+      if(!confirm('删除「'+g.zh+'」-「'+g.en+'」？')) return;
+      var i=list.indexOf(g); if(i>=0) list.splice(i,1);
+      persist(); render();
+    };
+    wrap.appendChild(box);
+    return wrap;
+  }
+  function render(){
+    var kw=(($('q')&&$('q').value)||'').trim().toLowerCase();
+    var host=$('list'); host.textContent='';
+    var arr=list.filter(function(g){ return !kw || String(g.zh).toLowerCase().indexOf(kw)>=0 || String(g.en).toLowerCase().indexOf(kw)>=0; });
+    if(!arr.length){
+      host.appendChild(el('div','empty', list.length? '没有匹配的词条' : '术语库还是空的。点上方「＋ 新增词条」手动添加，或在主页面查询后把候选存入。'));
+      return;
+    }
+    arr.forEach(function(g){ host.appendChild(cardFor(g)); });
+    var sub=document.querySelector('p.sub');
+    if(sub) sub.textContent='共 '+list.length+' 条　·　保存在你本机';
+  }
+  $('fsave').onclick=saveForm;
+  $('fcancel').onclick=function(){ $('form').hidden=true; editIdx=-1; };
+  $('fzh').addEventListener('keydown',function(e){ if(e.key==='Enter') $('fen').focus(); });
+  $('fen').addEventListener('keydown',function(e){ if(e.key==='Enter') saveForm(); });
+  var addBtn=document.querySelectorAll('div.bar button')[0];
+  if(addBtn) addBtn.onclick=function(){ openForm(null); };
+  var cpBtn=document.querySelectorAll('div.bar button')[2];
+  if(cpBtn) cpBtn.onclick=copyJson;
+  var expBtn=document.querySelectorAll('div.bar button')[1];
+  if(expBtn) expBtn.onclick=function(){
+    var a=document.createElement('a');
+    a.href=URL.createObjectURL(new Blob([csvText()],{type:'text/csv'})); a.download='术语库.csv'; a.click();
+  };
+  if($('q')) $('q').addEventListener('input', render);
+  render();
+})();
+`;
+  d.body.appendChild(app);
+  return '<!DOCTYPE html>\n'+d.documentElement.outerHTML;
+}
+function openGlossary(){
+  const u=URL.createObjectURL(new Blob([buildGlossaryPage()],{type:'text/html;charset=utf-8'}));
+  if(!window.open(u,'_blank')) toast('浏览器拦截了新窗口，请允许本页弹窗');
+}
+function isLocalOnly(fileName){
+  const f=corpus.find(o=>o.name===fileName);
+  return !!(f&&f.localOnly);
+}
+function glossFor(term){ return glossary.filter(g=>g.zh===term||(g.zh.includes(term)&&term.length>=2)); }
+function renderResults(hits,terms){
+  const box=$('results'); box.textContent='';
+  if(hits.length) renderLegend(box);
+  if(!hits.length){
+    const e=el('div','card'); e.appendChild(el('div','empty','没有命中。试试更短的词、或检查文件是否已导入（当前 '+allUnits().length+' 组对照）。'));
+    box.appendChild(e); return;
+  }
+  hits.forEach(h=>{
+    const u=h.u;
+    const card=el('article','card res');
+    const head=el('div','head');
+    if(isLocalOnly(u.file)){ const lb=el('span','badge local','仅本地'); lb.title='该语料标记为仅限本地，禁用一切 API'; head.appendChild(lb); }
+    const src=el('span','src',u.file); src.title=u.file;
+    head.appendChild(src);
+    head.appendChild(el('span','loc','第 '+u.idx+' 组'));
+    head.appendChild(el('span','loc',u.kind==='sent'?('中句 '+u.zp[0]+'–'+u.zp[1]+' / 英句 '+u.ep[0]+'–'+u.ep[1]):('中 '+u.zp[0]+'–'+u.zp[1]+' 段 / 英 '+u.ep[0]+'–'+u.ep[1]+' 段')));
+    if(u.weak) head.appendChild(el('span','loc','⚠ 锚点弱'));
+    if(u.loose) head.appendChild(el('span','loc','含并句'));
+    if(u.unpaired) head.appendChild(el('span','loc','仅单侧有文'));
+    const op=el('button','openbtn','打开原文'); op.type='button';
+    op.title='在新标签打开该文件的完整中英对照（网页来源则打开原网址）';
+    op.addEventListener('click',ev=>{ ev.stopPropagation(); openSourceFile(corpus.find(o=>o.name===u.file)||{name:u.file,units:[u]},u.idx); });
+    head.appendChild(op);
+    const hit=el('span','hit'); hit.textContent=h.hit.map(x=>x.t).join(' '); head.appendChild(hit);
+    card.appendChild(head);
+
+    const pair=el('div','pair');
+    const uk=u.file+'#'+u.idx;
+    pair.appendChild(half('zh',u.zh||'（该段暂未找到对应中文）',terms,null,(u.zh||'').length>230,uk));
+    pair.appendChild(half('en',u.en||'（该段暂未找到对应英文；可点该文件的「重新对应」重排，或在此手动核对）',enRanges(u,terms),null,(u.en||'').length>230,uk));
+    card.appendChild(pair);
+    if(isLocalOnly(u.file)){ /* 仅限本地：线索不可点击触发 API */ }
+    else Array.prototype.forEach.call(card.querySelectorAll('mark.weak'),function(mk){
+      mk.title='这是机器猜测的位置线索，点此用 AI 精确抽取本段';
+      mk.addEventListener('click',async function(ev){
+        ev.stopPropagation();
+        const keep=mk.textContent; mk.textContent='分析中…';
+        try{ await aiRun([{u:u}],terms,false); renderResults(lastHits,lastTerms); renderVerdict(); saveCorpus(); toast('已用 AI 核对，高亮已更新'); }
+        catch(err){ mk.textContent=keep; toast('抽取失败：'+err.message); if(!cfg.key) $('mask').classList.add('on'); }
+      });
+    });
+
+    const ck2=(terms||[]).join('、');
+    const mineAi=(u.ai||[]).filter(x=>x&&x.en&&x.term===ck2);
+    if(mineAi.length){
+      const line=el('div','saveline');
+      mineAi.forEach(a=>{
+        const chip=el('span','aihit');
+        chip.appendChild(el('b',null,a.en==='NONE'?'原文无对应':'AI 判定'));
+        const v=el('span',null,a.en); if(a.en==='NONE') v.className='none';
+        chip.appendChild(v);
+        if(a.note) chip.appendChild(el('span','df',a.note));
+        const save=el('button','more','存入术语库'); save.type='button';
+        save.addEventListener('click',()=>{ if(a.en&&a.en!=='NONE') confirmAddGloss(terms.join('、'),a.en,u.file+' · 第'+u.idx+'组','AI 抽取'); });
+        chip.appendChild(save); line.appendChild(chip);
+      });
+      card.appendChild(line);
+    }
+    if(!card.querySelector('.foot')){
+      const foot=el('div','foot');
+      if(isLocalOnly(u.file)){
+        const lock=el('span','loc','仅限本地 · 已禁用 AI 调用与导出');
+        lock.title='该语料标记为仅限本地，不会产生任何网络请求';
+        foot.appendChild(lock); foot.appendChild(el('span','sp'));
+      }else{
+        const one=el('button','btn ghost','AI 核对本段译法'); one.type='button';
+        one.title='把本段中英原文发给你填的 API，让它从英文原文里定位与查询词严格对应的片段（找不到返回 NONE）。只定位，不翻译。';
+        one.addEventListener('click',async()=>{ btxt(one,'分析中',true); try{ await aiRun([{u:u}],terms,false); clearAiErr(); renderResults(hits,terms); renderVerdict(); }catch(e){ showAiErr(e.message+(lastAiErr?('\n'+lastAiErr):'')); toast('AI 调用失败，原因见结果区顶部'); } btxt(one,'',false); });
+        foot.appendChild(one); foot.appendChild(el('span','sp'));
+      }
+      const save=el('button','btn ghost','手动存入术语库'); save.type='button'; save.style.background='transparent'; save.style.color='var(--acc)';
+      save.addEventListener('click',()=>openManual(terms,u));
+      foot.appendChild(save);
+      card.appendChild(foot);
+    }
+    box.appendChild(card);
+  });
+}
+function openManual(terms,u){
+  const zh=prompt('存入术语库的中文词条：',terms.join('、')); if(zh===null) return;
+  const en=prompt('对应的英文译法（可从上方英文段复制）：',''); if(!en) return;
+  addGloss(zh.trim(),en.trim(),u.file+' · 第'+u.idx+'组','人工确认');
+}
+
+/* SECTION: glossary ops */
+let pendGloss=null;
+function confirmAddGloss(zh,en,src,note){
+  pendGloss={src:src||'',note:note||''};
+  $('gmAsk').textContent='是否将「'+zh+'」-「'+en+'」写入术语库？下面两个字段可以直接改。';
+  $('gmZh').value=zh||''; $('gmEn').value=en||''; $('gmSrc').value=src||'';
+  $('gmask').classList.add('on');
+  setTimeout(()=>{ const z=$('gmZh'); if(z&&z.focus) z.focus(); },60);
+}
+function addGloss(zh,en,src,note){
+  if(glossary.some(g=>g.zh===zh&&g.en===en)){ toast('术语库已有该条目'); return; }
+  glossary.unshift({zh:zh,en:en,src:src||'',note:note||'',ts:Date.now()});
+  saveGloss(); toast('已存入术语库：'+zh+' → '+en);
+}
+function renderGloss(){
+  const gc=$('gCount'); if(gc) gc.textContent=glossary.length+' 条';
+  const tip=$('gTip');
+  if(tip) tip.textContent=glossary.length
+    ? ('已存 '+glossary.length+' 条。点「打开术语库」查看、筛选、导出或清空；查询时会先在这里匹配。')
+    : '还没有术语。查询后点候选词或结果卡片上的「存入术语库」即可添加。';
+}
+
+/* SECTION: AI */
+function sysPrompt(){
+  return '你是术语对齐器，不是翻译器。用户给出若干组 {id, zh, en} 中英对照原文，以及一个中文目标词。你的唯一任务：在每组 en 里找出与该中文词严格对应的那一小段英文表述。规则：(1) 只能输出 en 原文中原样出现过的连续片段，禁止改写、禁止换成你认为更好的译法、禁止同义替换；(2) 片段要尽量短，只覆盖该词对应的部分，不要把整句抄下来；(3) 若某组 en 中确实没有对应表述，该组 translation 填 "NONE"；(4) 同一中文词在不同组里译法可能不同，逐组独立判断，不要为了统一而编造；(5) 只输出 JSON，不要任何解释文字、不要 markdown 代码块。输出格式：{"results":[{"id":1,"translation":"...","confidence":"high|medium|none"}]}';
+}
+function buildPrompt(units,terms){
+  const payload=units.map((h,i)=>({id:i+1,zh:h.u.zh.length>1500?h.u.zh.slice(0,1500)+'…':h.u.zh,en:h.u.en.length>1500?h.u.en.slice(0,1500)+'…':h.u.en}));
+  return '中文目标词：'+JSON.stringify(terms)+'\n对照原文：'+JSON.stringify(payload)+'\n请按 system 中的规则返回 JSON。';
+}
+const AUTH_PREFIX=String.fromCharCode(66,101,97,114,101,114)+' ';
+let lastAiErr='';
+async function chat(messages){
+  if(!cfg.key) throw new Error('未填写 API Key（右上角「设置」里填）');
+  const base=(cfg.base||'').replace(/\/+$/,'');
+  const url=base+'/chat/completions';
+  let r;
+  try{
+    r=await fetch(url,{method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':AUTH_PREFIX+cfg.key},
+      body:JSON.stringify({model:cfg.model||'qwen-plus',temperature:0,messages:messages})});
+  }catch(e){
+    const m='(1) 浏览器拦截了跨域请求或网络不可达（'+((e&&e.name)||'Error')+'：'+((e&&e.message)||'')+'）。'
+      +'可改用 Chrome/Edge 打开；或先用「复制查询包」把内容交给其他 AI 工具，再把返回的 JSON 粘回「设置→解析回填」。'
+      +' (2) 也可能是地址写错，应形如 https://dashscope.aliyuncs.com/compatible-mode/v1';
+    lastAiErr='请求地址：'+url+'\n'+m+'（Key 长度 '+String(cfg.key).length+'）';
+    throw new Error(m);
+  }
+  if(!r.ok){
+    const t=await r.text().catch(()=>'');
+    let hint='';
+    if(r.status===401) hint='API Key 无效、已过期，或与该服务不匹配。';
+    else if(r.status===403) hint='该 Key 无此模型权限。';
+    else if(r.status===404) hint='Base URL 或模型名不对（地址应到 /v1 为止，模型例如 qwen-plus）。';
+    else if(r.status===429) hint='触发限流或额度不足。';
+    else if(r.status>=500) hint='服务端暂时异常，稍后重试。';
+    lastAiErr='HTTP '+r.status+' '+hint+'\n请求地址：'+url+'\n响应：'+(t.slice(0,300)||r.statusText);
+    throw new Error('HTTP '+r.status+' '+hint+(t?' '+t.slice(0,140):''));
+  }
+  let j;
+  try{ j=await r.json(); }catch(e){ lastAiErr='响应不是 JSON，可能被网关拦截：'+(await r.text().catch(()=>'')).slice(0,200); throw new Error('响应不是 JSON'); }
+  const c=j&&j.choices&&j.choices[0]&&j.choices[0].message&&j.choices[0].message.content;
+  if(!c){ lastAiErr='返回结构异常：'+JSON.stringify(j).slice(0,240); throw new Error('返回内容为空'); }
+  lastAiErr='';
+  return typeof c==='string'?c:JSON.stringify(c);
+}
+function showAiErr(msg){
+  const box=$('candBox'); if(!box) return;
+  box.hidden=false;
+  let e=$('aiErrBox');
+  if(!e){ e=el('div','msg on bad'); e.id='aiErrBox'; box.insertBefore(e,box.firstChild); }
+  e.textContent='AI 调用未成功：'+msg;
+  e.style.whiteSpace='pre-wrap';
+}
+function clearAiErr(){ const e=$('aiErrBox'); if(e) e.remove(); }
+function extractJson(text){
+  let t=String(text).trim().replace(/^```(json)?/i,'').replace(/```$/,'').trim();
+  const s=t.indexOf('{'); if(s<0) throw new Error('返回里找不到 JSON：'+t.slice(0,120));
+  let depth=0,inStr=false,esc=false;
+  for(let i=s;i<t.length;i++){
+    const ch=t[i];
+    if(inStr){ if(esc)esc=false; else if(ch==='\\')esc=true; else if(ch==='"')inStr=false; continue; }
+    if(ch==='"')inStr=true; else if(ch==='{')depth++; else if(ch==='}'){ depth--; if(depth===0) return JSON.parse(t.slice(s,i+1)); }
+  }
+  throw new Error('JSON 不完整');
+}
+async function aiRun(hits,terms,showProgress){
+  const units=hits.slice(0,60);
+  const results=new Array(units.length).fill(null);
+  const BATCH=5;
+  for(let i=0;i<units.length;i+=BATCH){
+    const chunk=units.slice(i,i+BATCH).map((h,k)=>({u:h.u,id:k+1}));
+    const userPrompt=buildPrompt(chunk,terms);
+    const out=await chat([{role:'system',content:sysPrompt()},{role:'user',content:userPrompt}]);
+    let obj; try{ obj=extractJson(out); }catch(e){ throw new Error('无法解析模型输出：'+e.message); }
+    (obj.results||[]).forEach(rr=>{
+      const target=chunk.find(c=>c.id===rr.id); if(!target) return;
+      const gi=units.indexOf(target.u!==undefined?hits.find(h=>h.u===target.u):hits.find(h=>h.u===target.u));
+      const pos=chunk.indexOf(chunk.find(c=>c.id===rr.id));
+      const globalIdx=i+pos;
+      const en=(rr.translation||'NONE').toString().trim();
+      results[globalIdx]={en:en,conf:rr.confidence||''};
+      if(hits[globalIdx]&&hits[globalIdx].u) hits[globalIdx].u.ai=[{en:en,note:rr.confidence?('置信 '+rr.confidence):'',term:(terms||[]).join('、')}];
+    });
+    if(showProgress&&$('bar')){ const bar=$('bar'); bar.classList.add('on'); bar.querySelector('i').style.width=Math.round(Math.min(1,(i+BATCH)/units.length)*100)+'%'; }
+  }
+  if($('bar')) $('bar').classList.remove('on'), $('bar').querySelector('i').style.width='0';
+  return results;
+}
+async function runAIAll(list){
+  let target=list&&list.length?list:lastHits;
+  if(target&&target.length){
+    const before=target.length;
+    target=target.filter(h=>!isLocalOnly(h.u.file));
+    if(!target.length){ toast('这些语料都标记为「仅限本地」，已阻止 API 调用'); return; }
+    if(target.length<before) toast('已跳过 '+(before-target.length)+' 条仅限本地的语料');
+  }
+  if(!target||!target.length){ toast('先查询，再抽取'); return; }
+  if(!cfg.key){ toast('请先在「设置」里填 API Key'); $('mask').classList.add('on'); return; }
+  const btn=$('btnAI'); btxt(btn,'抽取中',true);
+  try{
+    await aiRun(target,lastTerms,true);
+    lastAI=aggregate(lastHits,lastTerms);
+    renderAI();
+
+    renderResults(lastHits,lastTerms);
+    renderVerdict();
+    saveCorpus();
+    clearAiErr();
+    toast('AI 抽取完成，共 '+target.length+' 段');
+  }catch(e){
+    showAiErr(e.message+(lastAiErr?('\n'+lastAiErr):''));
+    $('cfgMsg').className='msg on bad';
+    $('cfgMsg').textContent='调用失败：'+e.message+(lastAiErr?('\n\n'+lastAiErr):'');
+    toast('AI 调用失败，原因已显示在结果区顶部');
+  }
+  btxt(btn,'',false);
+}
+function aggregate(hits,terms){
+  const map=new Map();
+  hits.forEach(h=>{ (h.u.ai||[]).forEach(a=>{
+    if(!a.en||a.en==='NONE') return;
+    const k=a.en.toLowerCase().replace(/\s+/g,' ').trim();
+    let r=map.get(k); if(!r){ r={en:a.en,count:0,srcs:[]}; map.set(k,r); }
+    r.count++; if(r.srcs.length<6) r.srcs.push(h.u.file+' 第'+h.u.idx+'组');
+  }); });
+  return [...map.values()].sort((a,b)=>b.count-a.count);
+}
+function renderAI(){
+  const wrap=$('cands'); const box=$('candBox'); box.hidden=false;
+  const head=wrap.parentNode.querySelector('.lab');
+  head.textContent='候选译法 · AI 抽取聚合（按出现次数排序，次数最多的通常就是这批文件里的固定译法）';
+  wrap.textContent='';
+  if(!lastAI||!lastAI.length){
+    const n=el('div','hint'); n.textContent='AI 在原文中未发现有对应译法的段落（返回 NONE）。'; wrap.appendChild(n);
+    return;
+  }
+  lastAI.forEach((r,i)=>{
+    const b=el('button','cand'+(i===0?' top':'')); b.type='button';
+    b.appendChild(el('span',null,r.en));
+    b.appendChild(el('span','df',r.count+' 次'));
+    b.title=r.srcs.join(' / ');
+    b.addEventListener('click',()=>confirmAddGloss(lastTerms.join('、'),r.en,r.srcs[0]||'','AI 聚合'));
+    wrap.appendChild(b);
+  });
+  const noneCount=lastHits.filter(h=>(h.u.ai||[]).some(a=>a.en==='NONE')).length;
+  $('candNote').textContent=noneCount?('其中 '+noneCount+' 段模型判断英文里没有该词的对应表述，可在结果里人工核对。'):'全部命中段都找到了对应表述。';
+}
+async function copyPrompt(){
+  if(!lastHits.length){ toast('先查询再复制'); return; }
+  const safe=lastHits.filter(h=>!isLocalOnly(h.u.file));
+  if(!safe.length){ toast('当前命中的语料都标记为「仅限本地」，已阻止导出给外部 AI'); return; }
+  if(safe.length<lastHits.length) toast('已排除 '+(lastHits.length-safe.length)+' 条仅限本地的语料');
+  const text='【系统】\n'+sysPrompt()+'\n\n【用户】\n'+buildPrompt(safe.slice(0,60),lastTerms);
+  let done=false;
+  try{ await navigator.clipboard.writeText(text); done=true; }catch(e){
+    const ta=el('textarea'); ta.value=text; ta.style.position='fixed'; ta.style.left='-9999px';
+    document.body.appendChild(ta); ta.select();
+    try{ done=document.execCommand('copy'); }catch(e2){}
+    ta.remove();
+  }
+
+  toast(done?'查询包已复制，粘给任意 AI 后把返回的 JSON 贴到「设置 → 解析回填」':'复制失败，请打开设置手动复制');
+  if(!done){ $('pasteBack').value=text; $('mask').classList.add('on'); }
+}
+function parseBack(){
+  const raw=$('pasteBack').value.trim();
+  if(!raw){ toast('先粘贴 AI 返回的 JSON'); return; }
+  let obj; try{ obj=extractJson(raw); }catch(e){ toast('解析失败：'+e.message); return; }
+  const arr=obj.results||obj;
+  if(!Array.isArray(arr)){ toast('格式不对，需要含 results 数组的 JSON'); return; }
+  let n=0;
+  arr.forEach(rr=>{
+    const u=lastHits[Number(rr.id)-1]; if(!u) return;
+    const en=(rr.translation||rr.en||'NONE').toString().trim();
+    u.u.ai=[{en:en,note:'回填',term:(lastTerms||[]).join('、')}]; n++;
+  });
+  if(!n){ toast('没匹配到条目：请保持查询结果不变再回填'); return; }
+  lastAI=aggregate(lastHits,lastTerms);
+  renderResults(lastHits,lastTerms); renderAI(); renderVerdict(); saveCorpus();
+  toast('已回填 '+n+' 条');
+}
+
+/* SECTION: recents */
+function pushRecent(q){
+  let arr=[]; try{ arr=JSON.parse(S.get(K_RECENT)||'[]'); }catch(e){}
+  arr=[q].concat(arr.filter(x=>x!==q)).slice(0,10); S.set(K_RECENT,JSON.stringify(arr)); renderRecent();
+}
+function renderRecent(){
+  let arr=[]; try{ arr=JSON.parse(S.get(K_RECENT)||'[]'); }catch(e){}
+  const box=$('recents'); box.textContent='';
+  const tools=$('recentTools');
+  if(tools) tools.hidden=!arr.length;
+  arr.forEach(q=>{
+    const t=el('span','rtag');
+    const lab=el('span',null,q); lab.style.cursor='pointer';
+    lab.addEventListener('click',()=>{ $('q').value=q; runSearch(); });
+    const del=el('button','rdel','×'); del.type='button'; del.title='删除这条记录';
+    del.addEventListener('click',ev=>{
+      ev.stopPropagation();
+      let cur=[]; try{ cur=JSON.parse(S.get(K_RECENT)||'[]'); }catch(e){}
+      cur=cur.filter(x=>x!==q); S.set(K_RECENT,JSON.stringify(cur)); renderRecent();
+    });
+    t.appendChild(lab); t.appendChild(del); box.appendChild(t);
+  });
+}
+
+/* SECTION: verdict —— 直接给出判定译法 */
+function decide(hits,terms){
+  const curKey=(terms||[]).join('、');
+  const aiMap=new Map(); let noneN=0, aiCovered=0;
+  hits.forEach(h=>{
+    const mine=(h.u.ai||[]).filter(x=>x&&x.en&&x.term===curKey);
+    if(mine.some(x=>x.en!=='NONE')) aiCovered++;
+    mine.forEach(x=>{
+      if(x.en==='NONE'){ noneN++; return; }
+      const k=x.en.toLowerCase().replace(/\s+/g,' ').trim();
+      let r=aiMap.get(k); if(!r){ r={en:x.en,count:0,srcs:[],via:'ai'}; aiMap.set(k,r); }
+      r.count++; if(r.srcs.length<8) r.srcs.push(h.u.file+' 第'+h.u.idx+'组');
+    });
+  });
+  const aiList=[...aiMap.values()].sort((x,y)=>y.count-x.count);
+  const cooc=ngrams(hits).filter(c=>c.df>=2);
+  if(aiList.length){
+    const alts=aiList.slice(1).map(r=>({en:r.en,count:r.count,srcs:r.srcs,via:'ai'}));
+    cooc.forEach(c=>{
+      const k=c.disp.toLowerCase().replace(/\s+/g,' ').trim();
+      if(aiMap.has(k)) return;
+      if(alts.some(x=>x.en.toLowerCase().replace(/\s+/g,' ').trim()===k)) return;
+      alts.push({en:c.disp,count:c.df,srcs:[],via:'cooccur'});
+    });
+    alts.sort((x,y)=>y.count-x.count);
+    return {source:'ai',best:aiList[0].en,count:aiList[0].count,
+      total:aiList.reduce((s,r)=>s+r.count,0),alts:alts,none:noneN,hits:hits.length,aiCovered:aiCovered};
+  }
+  if(cooc.length){
+    const floor=Math.max(2,Math.ceil(hits.length*0.34));
+    const keep=cooc.filter(c=>c.df>=floor);
+    const base=keep.length?keep:cooc;
+    return {source:'cooccur',best:base[0].disp,count:base[0].df,total:hits.length,
+      alts:base.slice(1).map(c=>({en:c.disp,count:c.df,srcs:[],via:'cooccur'})),none:0,hits:hits.length};
+  }
+  const gs=[];
+  (terms||[]).forEach(t=>{ glossFor(t).forEach(g=>{ if(!gs.some(x=>x.zh===g.zh&&x.en===g.en)) gs.push(g); }); });
+  if(gs.length){
+    return {source:'glossary',best:gs[0].en,count:gs.length,total:Math.max(hits.length,gs.length),
+      alts:gs.slice(1).map(g=>({en:g.en,count:1,srcs:[g.zh],via:'glossary'})),none:0,hits:hits.length};
+  }
+  return null;
+}
+function renderVerdict(){
+  const box=$('verdict'); lastVerdict=null; box.hidden=true;
+  if(!lastHits.length) return;
+  const bar=$('vBar'), alt=$('vAlt'), note=$('vNote');
+  alt.textContent=''; bar.textContent=''; bar.hidden=true;
+  box.hidden=false;
+  const v=decide(lastHits,lastTerms);
+  if(!v){
+    $('vTerm').textContent='暂未判定出固定译法';
+    $('vMeta').textContent='命中 '+lastHits.length+' 段';
+    note.textContent='这个词在本批语料里只出现 '+lastHits.length+' 次，且没有多段共有的短语可交叉验证（术语库里也还没有它）。看下方每段英文里的高亮位置，或点该段的「AI 核对本段译法」；确认后可「手动存入术语库」，下次就会直接显示。';
+    return;
+  }
+  lastVerdict=v;
+  const agree=v.count/Math.max(1,v.source==='ai'?v.total:v.hits);
+  $('vTerm').textContent=v.best;
+  $('vMeta').textContent=(v.source==='ai'
+      ? ('AI 已核对 '+(v.aiCovered||v.count)+'/'+v.hits+' 段 · 该译法 '+v.count+' 段支持')
+      : (v.source==='glossary'?'本地术语库收录 · ':'共现统计 · '))
+    +(v.source==='ai'?'':(v.source==='glossary'?(v.count+' 条记录'):(v.count+'/'+v.hits+' 段一致')));
+  const items=[{en:v.best,n:v.count}].concat(v.alts.map(a=>({en:a.en,n:a.count})));
+  const sum=items.reduce((s,x)=>s+x.n,0)||1;
+  const colors=['var(--acc)','var(--gold)','#9aa7b4','#c3ccd6'];
+  bar.hidden=false;
+  items.forEach((x,i)=>{
+    const b=el('i'); b.style.width=Math.max(4,(x.n/sum)*100)+'%';
+    b.style.background=colors[Math.min(i,colors.length-1)]; b.title=x.en+' × '+x.n;
+    bar.appendChild(b);
+  });
+  items.slice(1).forEach(x=>{
+    const c=el('button','cand'); c.type='button';
+    c.appendChild(el('span',null,x.en)); c.appendChild(el('span','df',(x.via==='cooccur'?'共现 ':'')+(v.source==='glossary'?'备选':(x.n+' 段'))));
+    c.title='同批文件里的另一种译法，点选存入术语库';
+    c.addEventListener('click',()=>confirmAddGloss(lastTerms.join('、'),x.en,'','备选译法'));
+    alt.appendChild(c);
+  });
+  let t;
+  if(v.source==='glossary'){
+    t='该译法来自本地术语库（你此前确认过的条目），无需联网。若这批文件里出现不同译法，建议点「AI 精确抽取全部命中」再核一次。';
+  }else if(v.source==='ai'&&v.aiCovered<v.hits){
+    t='注意：AI 只核对了 '+v.aiCovered+'/'+v.hits+' 段，其余段落尚未核对。下方备选已把「共现」候选一并列出（标注共现 N 段），若某个共现候选覆盖段数更多，它可能才是这批文件的主译法——建议点「AI 精确抽取全部命中」把剩余段落补齐。';
+  }else if(v.source==='ai'){
+    t='AI 在 '+v.total+' 处命中段的英文原文里定位到该片段';
+    t+=v.alts.length?('，共发现 '+(v.alts.length+1)+' 种不同译法，一致率 '+Math.round(agree*100)+'%——说明这批文件译法不完全统一，按出处核对更稳妥'):('，各段译法完全一致');
+    if(v.none) t+='；另有 '+v.none+' 段模型判断英文里没有对应表述';
+    t+='。已把该译法在下方每段英文里高亮出来。';
+  }else{
+    t='来自共现统计，未经 AI 核验：该短语在 '+v.count+'/'+v.hits+' 个命中段中重复出现。建议点「AI 精确抽取全部命中」再确认一次，尤其是意译类词条。';
+  }
+  note.textContent=t;
+}
+function renderGlossHits(terms){
+  const box=$('glossHits'); box.textContent='';
+  if(!terms||!terms.length){ box.hidden=true; return; }
+  const seen=new Set(), list=[];
+  terms.forEach(t=>{ glossFor(t).forEach(g=>{ const k=g.zh+'@@'+g.en; if(seen.has(k)) return; seen.add(k); list.push(g); }); });
+  box.hidden=false;
+  if(!list.length){
+    box.appendChild(el('div','known','本地术语库无对应，欢迎添加'));
+    box.appendChild(el('div','gp-note','在下方结果里点候选词，或点结果卡片上的「存入术语库」，就会出现在这里。'));
+    return;
+  }
+  box.appendChild(el('div','known','本地术语库命中 '+list.length+' 条 · 无需联网'));
+  list.slice(0,8).forEach(g=>{
+    const card=el('div','gphit');
+    const gh=el('div','gh');
+    gh.appendChild(el('span','gz',g.zh));
+    gh.appendChild(el('span','gp','→'));
+    gh.appendChild(el('span','ge',g.en));
+    if(g.src) gh.appendChild(el('span','df',g.src));
+    const del=el('button','more','删除'); del.type='button';
+    del.addEventListener('click',()=>{ glossary=glossary.filter(o=>o!==g); saveGloss(); renderStats(); renderGlossHits(lastTerms); });
+    gh.appendChild(del);
+    const units=glossaryUnitsFor(g);
+    if(units.length){
+      const op=el('button','openbtn','打开原文'); op.type='button';
+      op.addEventListener('click',()=>{ const f=corpus.find(o=>o.name===units[0].file); if(f) openSourceFile(f,units[0].unit.idx); });
+      gh.appendChild(op);
+    }
+    card.appendChild(gh);
+    units.slice(0,1).forEach(it=>{
+      const wrap2=el('div');
+      const pair=el('div','pair');
+      [['zh','ZH 中文段落',''],['en','EN 英文段落','en2']].forEach(cfg2=>{
+        const cell=el('div','cell');
+        cell.appendChild(el('div','l2',cfg2[1]+' · 第'+it.unit.idx+'组'));
+        const tx=el('div');
+        const text=it.unit[cfg2[0]]||'';
+        if(cfg2[0]==='zh') highlight(tx,text,terms,null); else highlight(tx,text,[g.en],'en2');
+        cell.appendChild(tx); pair.appendChild(cell);
+      });
+      wrap2.appendChild(pair);
+      const toggle=el('button','more','收起原文'); toggle.type='button';
+      toggle.addEventListener('click',()=>{ wrap2.hidden=!wrap2.hidden; toggle.textContent=wrap2.hidden?'展开原文':'收起原文'; });
+      card.appendChild(toggle); card.appendChild(wrap2);
+    });
+    box.appendChild(card);
+  });
+  if(list.length>8) box.appendChild(el('div','gp-note','另有 '+(list.length-8)+' 条命中，可在「打开术语库」里查看全部'));
+}
+function verdictNeedles(){ return lastVerdict?[lastVerdict.best].concat((lastVerdict.alts||[]).map(a=>a.en)):[]; }
+function copyText(text,okMsg){
+  const done=()=>toast(okMsg||'已复制');
+  function fallback(){
+    const ta=el('textarea'); ta.value=text; ta.style.position='fixed'; ta.style.left='-9999px';
+    document.body.appendChild(ta); ta.select();
+    let ok=false; try{ ok=document.execCommand('copy'); }catch(e){}
+    ta.remove();
+    if(ok) done();
+    else { $('pasteBack').value=text; $('mask').classList.add('on'); toast('浏览器不允许直接复制，内容已放进设置面板文本框，请手动复制'); }
+  }
+  if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done).catch(fallback);
+  else fallback();
+}
+function copyEvidence(){
+  if(!lastHits.length){ toast('先查询再复制'); return; }
+  const L=['查询词：'+lastTerms.join('、')];
+  if(lastVerdict) L.push('判定译法：'+lastVerdict.best+'（'+lastVerdict.count+'/'+(lastVerdict.source==='ai'?lastVerdict.total:lastVerdict.hits)+' 一致，依据：'+(lastVerdict.source==='ai'?'AI 逐段抽取':'跨段共现统计')+'）');
+  if(lastVerdict&&lastVerdict.alts.length) L.push('其他译法：'+lastVerdict.alts.map(a=>a.en+' ×'+a.count).join('；'));
+  L.push('');
+  const safeHits=lastHits.filter(hh=>!isLocalOnly(hh.u.file));
+  if(safeHits.length<lastHits.length) L.push('（已排除 '+(lastHits.length-safeHits.length)+' 条标记为「仅限本地」的段落，未复制其原文）');
+  safeHits.forEach((hh,i)=>{
+    L.push('【'+(i+1)+'】'+hh.u.file+' · 第'+hh.u.idx+'组 · 中'+hh.u.zp[0]+'-'+hh.u.zp[1]+' / 英'+hh.u.ep[0]+'-'+hh.u.ep[1]);
+    L.push('ZH  '+hh.u.zh);
+    L.push('EN  '+hh.u.en);
+    if(hh.u.ai&&hh.u.ai.length) L.push('AI  '+hh.u.ai.map(a=>a.en).join(' | '));
+    L.push('');
+  });
+  copyText(L.join('\n'),'依据已复制：含判定结论、全部命中原文与出处');
+}
+
+/* SECTION: align-ui —— 无格式文本 / 双语网页对齐 */
+let lastAlign=null, webHelpOn=false;
+function commitUnits(name,r,urls){
+  return commitUnitsX(name,r,urls);
+}
+function commitUnitsX(name,r,urls){
+  const units=r.groups.map((g,i)=>({file:name,idx:i+1,zh:g.zh,en:g.en,
+    zp:[g.zi,g.zi+g.za-1],ep:[g.ei,g.ei+g.eb-1],ai:null,kind:'sent',weak:!!g.weak,loose:!!g.loose}));
+  addUnits(name,units,{name:name,origin:urls?'web':'align',urls:urls||{},importedAt:Date.now()});
+  if(dirH&&urls) writeDisk('正文/'+safeName(name)+' 中文.txt',(lastSrcZh||'')+'\n').then(()=>writeDisk('正文/'+safeName(name)+' 英文.txt',lastSrcEn||''));
+  return units.length;
+}
+let lastSrcZh='', lastSrcEn='';
+function doAlign(quiet){
+  const zhT=$('zhSrc').value.trim(), enT=$('enSrc').value.trim(), stat=$('alStat');
+  lastSrcZh=zhT; lastSrcEn=enT;
+  if(!zhT&&!enT){ stat.textContent='先粘贴内容，或把另存的 .html / 文本文件直接拖进输入框。'; return null; }
+  const A=toSources(zhT), B=toSources(enT);
+  const zh=A.zh.concat(B.zh), en=A.en.concat(B.en);
+  $('alState').textContent='解析中…';
+  if(!zh.length||!en.length){
+    stat.textContent='只分离出'+(zh.length?'中文':(en.length?'英文':'内容'))+'，另一种语言缺失。中英混排在同一段也可以——程序会按语言自动切分后再对齐。';
+    return null;
+  }
+  const r=alignSents(zh,en);
+  lastAlign=r;
+  if(!r.groups.length){ stat.textContent='对齐失败，没有形成可用句对。'; return null; }
+  stat.textContent='';
+  stat.appendChild(document.createTextNode('中文 '+r.zSents+' 句 / 英文 '+r.eSents+' 句 → 对齐 '+r.groups.length+' 组'));
+  if(r.loose) stat.appendChild(el('span',null,'，'+r.loose+' 句因缺少锚点被并入相邻组（结果里标为「含并句」，建议扫一眼）'));
+  if(r.weak) stat.appendChild(el('span',null,'，其中 '+r.weak+' 组锚点较弱（结果里会标注，建议人工扫一眼）'));
+  if(!r.weak) stat.appendChild(document.createTextNode('，锚点全部充分。'));
+  if(!quiet){
+    const name=$('alName').value.trim()||suggestName(zh);
+    const n=commitUnits(name,r,{zh:$('zhUrl').value.trim(),en:$('enUrl').value.trim()});
+    $('alState').textContent='已入库 '+n+' 组';
+    toast('对齐完成：'+n+' 组对照已加入语料（'+name+'）');
+    askLocalOnly([name]);
+  }else toast('已预览对齐结果，确认名称后点「对齐并加入语料」');
+  return r;
+}
+function suggestName(zhArr){
+  const first=String(zhArr[0]||'').replace(/\s+/g,'');
+  return '无格式素材-'+(first?first.slice(0,12):new Date().toISOString().slice(0,10));
+}
+async function doFetch(){
+  const zu=$('zhUrl').value.trim(), eu=$('enUrl').value.trim(), stat=$('alStat');
+  if(!zu||!eu){ toast('中、英两个网址都要填'); return; }
+  const b=$('btnFetch'); btxt(b,'抓取中',true);
+  try{
+    const zt=await fetchWeb(zu,cfg.proxy), et=await fetchWeb(eu,cfg.proxy);
+    const zp=htmlToParagraphs(zt), ep=htmlToParagraphs(et);
+    if(!zp.length||!ep.length) throw new Error('正文提取为空（可能反爬或页面动态渲染）');
+    $('zhSrc').value=zp.join('\n\n'); $('enSrc').value=ep.join('\n\n');
+    const t1=htmlTitle(zt);
+    if(t1) $('alName').value=t1.replace(/[_\\-|].*$/,'').trim().slice(0,40);
+    const prv=doAlign(true);
+    if(!prv||!prv.groups.length){ $('alStat').textContent='正文已抓到，但没能形成对齐句对，请确认两个页面是否为同一场内容。'; }
+    else{
+      const nm2b=$('alName').value.trim()||('网页对齐-'+String(t1||'').slice(0,20));
+      const n=commitUnits(nm2b,prv,{zh:zu,en:eu});
+      if(dirH){ writeDisk('原件/'+safeName(nm2b)+' 中文.html',zt); writeDisk('原件/'+safeName(nm2b)+' 英文.html',et); }
+      $('alState').textContent='已入库 '+n+' 组';
+      toast('抓取并对齐完成：'+n+' 组，网址与正文已留存');
+      askLocalOnly([nm2b]);
+    }
+  }catch(e){
+    stat.textContent='抓取失败：'+e.message+'。政府网站通常不允许浏览器跨域直读。可靠做法：浏览器打开页面按 Ctrl+S 另存为「网页，仅 HTML」，把两个 .html 拖进本页输入框；或直接复制正文粘贴。也可在设置里填抓取代理。';
+    toast('抓取被跨域拦截，请改用另存 HTML 或粘贴文本');
+  }
+  btxt(b,'',false);
+}
+function handleWebs(webs){
+
+  const zh=[], en=[]; let title='';
+  webs.forEach(w=>{
+    const s=toSources(w.paras.join('\n\n'));
+    if(s.zh.length>=s.en.length){ zh.push.apply(zh,s.zh); if(!title) title=w.name; }
+    else { en.push.apply(en,s.en); if(!title) title=w.name; }
+  });
+  if(zh.length&&en.length){
+    const r=alignSents(zh,en);
+    if(r.groups.length){
+      const nm=$('alName').value.trim()||String(title||'网页对齐').slice(0,40);
+      commitUnits(nm,r,{zh:(webs&&webs.zhUrl)||'',en:(webs&&webs.enUrl)||''});
+      askLocalOnly([nm]);
+      $('alStat').textContent='两个网页已自动对齐：中文 '+r.zSents+' 句 / 英文 '+r.eSents+' 句 → '+r.groups.length+' 组（弱锚点 '+r.weak+' 组）。';
+      $('alState').textContent='已入库 '+r.groups.length+' 组';
+      toast('网页对齐完成：'+r.groups.length+' 组对照');
+
+      return;
+    }
+  }
+  const hasZh=zh.length>0, arr=hasZh?zh:en;
+  $(hasZh?'zhSrc':'enSrc').value=arr.join('\n\n');
+  $('alStat').textContent='已读入'+(hasZh?'中文':'英文')+'网页 '+arr.length+' 段并填入对应输入框。请把另一语言的网页文件也拖进来，或粘贴另一语言正文，再点「对齐并加入语料」。';
+  toast('单语网页已读入，等待另一语言');
+}
+function bindTaDrop(id){
+  const ta=$(id);
+  ['dragenter','dragover'].forEach(ev=>ta.addEventListener(ev,e=>{ e.preventDefault(); e.stopPropagation(); ta.classList.add('hot'); }));
+  ['dragleave','drop'].forEach(ev=>ta.addEventListener(ev,e=>{ e.preventDefault(); e.stopPropagation(); ta.classList.remove('hot'); }));
+  ta.addEventListener('drop',async e=>{
+    const fs=Array.from(e.dataTransfer.files||[]); if(!fs.length) return;
+    e.stopPropagation();
+    let out=[];
+    for(const f of fs){
+      const txt=await f.text();
+      if(/\.html?|\\.htm$/i.test(f.name)) out=out.concat(htmlToParagraphs(txt));
+      else out.push(txt);
+    }
+    const s=toSources(out.join('\n\n'));
+    const isZh=/^zh/i.test(id);
+    const pick=(isZh?s.zh:s.en);
+    ta.value=(pick.length?pick:out).join('\n\n');
+    toast('已读入'+(isZh?'中文':'英文')+'来源 '+ta.value.split(/\n\n+/).length+' 段');
+  });
+}
+/* SECTION: opener —— 从结果或文件列表直接打开来源 */
+function buildSourceDoc(f,focusIdx,terms){
+  const d=document.implementation.createHTMLDocument(f.name);
+  const st=d.createElement('style');
+  st.textContent='body{font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;max-width:940px;margin:26px auto;padding:0 18px;line-height:1.7;color:#15202b;background:#f6f7f9}h1{font-size:19px;line-height:1.4}p.note{font-size:12.5px;color:#5d6b7a;margin:6px 0 20px}div.u{background:#fff;border:1px solid #e2e7ee;border-radius:12px;padding:14px 16px;margin:12px 0}div.focus{border-color:#1b4d8c;box-shadow:0 0 0 3px #eaf1fa}div.m{font-size:12px;color:#5d6b7a;margin-bottom:8px;font-family:ui-monospace,Menlo,Consolas,monospace}p.zh{margin:0 0 8px;font-size:14.5px}p.en{margin:0;font-family:Georgia,"Times New Roman",serif;font-size:14.5px;color:#122e4f}mark{background:#ffe9a8;border-radius:3px}';
+  d.head.appendChild(st);
+  const h1=d.createElement('h1'); h1.textContent=f.name; d.body.appendChild(h1);
+  const nt=d.createElement('p'); nt.className='note';
+  const src=(f.urls&&f.urls.zh)||(f.urls&&f.urls.en)||(f.fileRef||'本地导入文件');
+  nt.textContent='来源：'+src+'　·　导入时间：'+(f.importedAt?new Date(f.importedAt).toLocaleString():'未记录')+'　·　共 '+f.units.length+' 组中英对照';
+  d.body.appendChild(nt);
+  const list=(terms||[]).filter(Boolean);
+  f.units.forEach(u=>{
+    const box=d.createElement('div'); box.className='u'+((focusIdx&&u.idx===focusIdx)?' focus':'');
+    if(focusIdx&&u.idx===focusIdx) box.id='g'+u.idx;
+    const m=d.createElement('div'); m.className='m';
+    m.textContent='第 '+u.idx+' 组　中 '+(u.zp?u.zp[0]+'-'+u.zp[1]:'-')+' / 英 '+(u.ep?u.ep[0]+'-'+u.ep[1]:'-');
+    const z=d.createElement('p'); z.className='zh';
+    const e=d.createElement('p'); e.className='en';
+    fillWithMarks(d,z,u.zh,list);
+    const enList=list.filter(x=>!/[\u3400-\u9fff]/.test(x));
+    if(u.ai&&u.ai.length) u.ai.forEach(a=>{ if(a.en&&a.en!=='NONE') enList.push(a.en); });
+    fillWithMarks(d,e,u.en,enList);
+    box.appendChild(m); box.appendChild(z); box.appendChild(e); d.body.appendChild(box);
+  });
+  return '<!DOCTYPE html>\n'+d.documentElement.outerHTML;
+}
+function fillWithMarks(doc,node,text,list){
+  const spans=[];
+  (list||[]).forEach(nd=>{
+    if(!nd) return;
+    let from=0; const low=text.toLowerCase(), nl=String(nd).toLowerCase();
+    while(true){ const i=low.indexOf(nl,from); if(i<0) break; spans.push([i,i+nl.length]); from=i+nl.length; if(spans.length>300) break; }
+  });
+  spans.sort((a,b)=>a[0]-b[0]);
+  let pos=0;
+  spans.forEach(sp=>{
+    if(sp[0]<pos) return;
+    if(sp[0]>pos) node.appendChild(doc.createTextNode(text.slice(pos,sp[0])));
+    const mk=doc.createElement('mark'); mk.textContent=text.slice(sp[0],sp[1]); node.appendChild(mk); pos=sp[1];
+  });
+  if(pos<text.length) node.appendChild(doc.createTextNode(text.slice(pos)));
+}
+function openSourceFile(f,focusIdx){
+  if(!f){ toast('未找到该语料'); return; }
+  const url=(f.urls&&f.urls.zh)||(f.urls&&f.urls.en);
+  if(url){ window.open(url,'_blank','noopener'); toast('已在新标签打开源网页'); return; }
+  if(f._liveFile){
+    const u=URL.createObjectURL(f._liveFile);
+    if(!window.open(u,'_blank')) toast('浏览器拦截了新窗口，请允许本页弹窗');
+    return;
+  }
+  const html=buildSourceDoc(f,focusIdx,lastTerms);
+  const obj=new Blob([html],{type:'text/html;charset=utf-8'});
+  const u=URL.createObjectURL(obj);
+  if(!window.open(u,'_blank')) toast('浏览器拦截了新窗口，请允许本页弹窗');
+}
+async function openOriginalByName(name){
+  const f=corpus.find(o=>o.name===name); if(!f) return;
+  if(f.urls&&f.urls.zh){ window.open(f.urls.zh,'_blank','noopener'); return; }
+  if(dirH){
+    try{
+      const d=await dirH.getDirectoryHandle('原件');
+      const fh=await d.getFileHandle(safeName(f.name)+(f.origin==='docx'?'.docx':f.origin==='html'?'.html':'.txt'),{create:false});
+      const file=await fh.getFile();
+      const u=URL.createObjectURL(file);
+      if(window.open(u,'_blank')) { toast('已从本地资料库打开原始文件'); return; }
+    }catch(e){}
+  }
+  openSourceFile(f,null);
+}
+
+/* SECTION: csv */
+function csvCell(s){ s=String(s==null?'':s); return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s; }
+function exportCSV(){
+  if(!glossary.length){ toast('术语库为空'); return; }
+  const rows=[['中文','英文译法','出处','来源方式','时间']];
+  glossary.forEach(g=>rows.push([g.zh,g.en,g.src,g.note,new Date(g.ts).toLocaleString()]));
+  const csv='\ufeff'+rows.map(r=>r.map(csvCell).join(',')).join('\r\n');
+  const a=el('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download='术语库-'+new Date().toISOString().slice(0,10)+'.csv'; document.body.appendChild(a); a.click(); a.remove();
+  toast('已导出 '+glossary.length+' 条');
+}
+function importCSV(file){
+  const fr=new FileReader();
+  fr.onload=()=>{
+    const text=String(fr.result).replace(/^\ufeff/,'');
+    const lines=text.split(/\r?\n/).filter(l=>l.trim());
+    let added=0;
+    lines.forEach((l,i)=>{
+      const cells=l.split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/).map(s=>s.replace(/^"|"$/g,'').replace(/""/g,'"'));
+      if(cells.length<2) return;
+      if(i===0&&/中文|zh|Chinese/i.test(cells[0])) return;
+      const zh=(cells[0]||'').trim(), en=(cells[1]||'').trim();
+      if(!zh||!en) return;
+      if(glossary.some(g=>g.zh===zh&&g.en===en)) return;
+      glossary.push({zh:zh,en:en,src:(cells[2]||'').trim(),note:(cells[3]||'导入'),ts:Date.now()}); added++;
+    });
+    saveGloss(); toast(added?('导入 '+added+' 条'):'没有新条目（可能已存在）');
+  };
+  fr.readAsText(file,'utf-8');
+}
+
+function importAll(file){
+  const fr=new FileReader();
+  fr.onload=()=>{
+    try{
+      const obj=JSON.parse(String(fr.result));
+      const files=Array.isArray(obj)?obj:(obj.files||[]);
+      let nf=0,nu=0;
+      files.forEach(f=>{
+        const name=f.name||('导入-'+new Date().toISOString().slice(0,10));
+        const units=(f.units||[]).map((u,i)=>({file:name,idx:u.idx||i+1,zh:u.zh,en:u.en,
+          zp:u.zp||[0,0],ep:u.ep||[0,0],ai:u.ai||null,kind:u.kind||'para',weak:!!u.weak,loose:!!u.loose}));
+        if(!units.length) return;
+        corpus=corpus.filter(o=>o.name!==name);
+        corpus.push({name:name,units:units,localOnly:!!f.localOnly,folder:f.folder||'',origin:f.origin||'import',urls:f.urls||{},importedAt:f.importedAt||Date.now()});
+        nf++; nu+=units.length;
+      });
+      let ng=0;
+      (obj.glossary||[]).forEach(g=>{
+        if(!g||!g.zh||!g.en) return;
+        if(glossary.some(o=>o.zh===g.zh&&o.en===g.en)) return;
+        glossary.push({zh:g.zh,en:g.en,src:g.src||'',note:g.note||'导入',ts:g.ts||Date.now()}); ng++;
+      });
+      if(obj.cfgPublic){
+        if(obj.cfgPublic.base) cfg.base=obj.cfgPublic.base;
+        if(obj.cfgPublic.model) cfg.model=obj.cfgPublic.model;
+        if(typeof obj.cfgPublic.autoAI==='boolean') cfg.autoAI=obj.cfgPublic.autoAI;
+        if(typeof obj.cfgPublic.proxy==='string') cfg.proxy=obj.cfgPublic.proxy;
+        S.set(K_CFG,JSON.stringify(cfg));
+      }
+      renderFiles(); renderStats(); saveCorpus(); saveGloss(); fillCfg();
+      toast('已导入 '+nf+' 个文件 / '+nu+' 组对照 / '+ng+' 条术语');
+      if(dirH){
+        (async()=>{ const payload=snapshotAll();
+          const a=await writeDisk('中英对照语料.json',JSON.stringify(payload,null,1));
+          const b=await writeDisk('术语库.csv',glossCSV());
+          const s=$('sizeStat'); if(s) s.textContent=(a&&b)?('导入完成，已同步写入资料库「'+dirName+'」'):'导入完成，但写盘失败（请检查文件夹权限）';
+        })();
+      }else{
+        const s=$('sizeStat'); if(s) s.textContent='导入完成（仅存于浏览器 IndexedDB；建议连接文件夹或用「一键备份」留一份磁盘副本）';
+      }
+    }catch(e){ toast('导入失败：'+e.message); }
+  };
+  fr.readAsText(file,'utf-8');
+}
+async function oneKeyBackup(){
+  const s=$('sizeStat'); if(s) s.textContent='备份中…';
+  const payload=snapshotAll();
+  const stamp=new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
+  let diskOk=false;
+  if(dirH){
+    const a=await writeDisk('中英对照语料.json',JSON.stringify(payload,null,1));
+    const b=await writeDisk('术语库.csv',glossCSV());
+
+    diskOk=!!(a&&b);
+  }
+  await idbSet('corpus',payload);
+  await idbSet('glossary',glossary);
+  try{ S.set(K_CORPUS,JSON.stringify(payload.files)); S.set(K_GLOSS,JSON.stringify(glossary)); }catch(e){}
+  const a2=el('a');
+  a2.href=URL.createObjectURL(new Blob([JSON.stringify(payload,null,1)],{type:'application/json'}));
+  a2.download='中英对照备份-'+stamp+'.json';
+  document.body.appendChild(a2); a2.click(); a2.remove();
+  if(s) s.textContent=(diskOk?('已写入资料库「'+dirName+'」并下载 JSON 副本'):'已下载 JSON 备份')+'　·　'+stamp;
+  toast(diskOk?'备份完成：已写盘并下载副本':'备份完成：已下载 JSON（未连接文件夹）');
+}
+async function checkLocalSize(){
+  const s=$('sizeStat'); if(!s) return;
+  s.textContent='统计中…';
+  const parts=[];
+  try{
+    if(navigator.storage&&navigator.storage.estimate){
+      const est=await navigator.storage.estimate();
+      parts.push('浏览器已用 '+fmtBytes(est.usage)+' / 配额约 '+fmtBytes(est.quota));
+    }
+  }catch(e){}
+  parts.push('语料 '+fmtBytes(JSON.stringify(corpusSnapshot()).length)+'（'+corpus.length+' 个文件 / '+allUnits().length+' 组）');
+  parts.push('术语库 '+fmtBytes(JSON.stringify(glossary).length)+'（'+glossary.length+' 条）');
+  let ls=0;
+  try{ for(let i=0;i<localStorage.length;i++){ const k=localStorage.key(i); ls+=(String(k).length+String(localStorage.getItem(k)||'').length)*2; } }catch(e){}
+  parts.push('localStorage 约 '+fmtBytes(ls));
+  if(dirH){
+    let total=0, files=0, dirs=0;
+    try{
+      for await (const ent of dirH.values()){
+        if(ent.kind==='file'){ try{ const f=await ent.getFile(); total+=f.size; files++; }catch(e){} }
+        else dirs++;
+      }
+    }catch(e){}
+    parts.push('资料库「'+dirName+'」顶层 '+files+' 文件 / '+dirs+' 子目录 / '+fmtBytes(total));
+  }else{
+    parts.push('未连接资料库文件夹（无磁盘副本）');
+  }
+  s.textContent=parts.join('　·　');
+}
+async function openLocalDir(){
+  const s=$('sizeStat');
+  if(!dirH){ toast('还没选择资料库文件夹，请先点「选择资料库文件夹」'); return; }
+  const names=[];
+  try{ for await (const ent of dirH.values()) names.push(ent.name+(ent.kind==='directory'?'/':'')); }catch(e){}
+  if(s) s.textContent='资料库「'+dirName+'」包含：'+(names.length?names.join('、'):'（空）')+'　—　浏览器不允许脚本直接调起系统文件管理器，请在系统里打开这个文件夹。';
+  toast('浏览器安全限制：无法直接调起资源管理器，已列出内容');
+}
+function exportAll(){
+  const obj=corpusSnapshot();
+  obj.glossary=glossary;
+  const a=el('a');
+  a.href=URL.createObjectURL(new Blob([JSON.stringify(obj,null,1)],{type:'application/json'}));
+  a.download='中英对照语料备份-'+new Date().toISOString().slice(0,10)+'.json';
+  document.body.appendChild(a); a.click(); a.remove();
+  toast('已导出 '+obj.files.length+' 个文件 / '+obj.files.reduce((s,f)=>s+f.unitCount,0)+' 组对照');
+}
+/* SECTION: settings */
+function renderDiag(){
+  const d=$('cfgDiag'); if(!d) return;
+  const url=(cfg.base||'').replace(/\/+$/,'')+'/chat/completions';
+  d.textContent='请求地址：'+url+'\n模型：'+(cfg.model||'qwen-plus')+'　Key 长度：'+String(cfg.key||'').length+'　鉴权前缀：'+(cfg.key?'已构造（Bearer）':'未填 Key')+(lastAiErr?('\n上次错误：'+lastAiErr):'');
+  d.style.whiteSpace='pre-wrap';
+}
+function fillCfg(){ renderDiag(); $('cfgBase').value=cfg.base; $('cfgModel').value=cfg.model; $('cfgKey').value=cfg.key; $('cfgPersist').checked=!!cfg.persist; if($('cfgProxy'))$('cfgProxy').value=cfg.proxy||''; if($('optAuto'))$('optAuto').checked=!!cfg.autoAI; updateModeTag(); }
+function readCfg(){ cfg.base=$('cfgBase').value.trim()||cfg.base; cfg.model=$('cfgModel').value.trim(); cfg.key=$('cfgKey').value.trim(); cfg.persist=$('cfgPersist').checked; if($('cfgProxy'))cfg.proxy=$('cfgProxy').value.trim(); }
+function saveCfg(){ readCfg(); S.set(K_CFG,JSON.stringify(cfg)); saveCorpus(); updateModeTag(); toast('已保存'); }
+async function testCfg(){
+  readCfg(); S.set(K_CFG,JSON.stringify(cfg)); renderDiag();
+  const m=$('cfgMsg'); m.className='msg on'; m.textContent='请求中…';
+  try{
+    const out=await chat([{role:'user',content:'reply with the single word: ok'}]);
+
+    m.className='msg on ok'; m.textContent='连接正常（鉴权头与地址都正确），模型返回：'+out.slice(0,80); renderDiag();
+  }catch(e){ m.className='msg on bad'; m.textContent='连接失败：'+e.message+(lastAiErr?('\n'+lastAiErr):''); renderDiag(); }
+}
+
+/* SECTION: boot */
+function loadSample(){
+  let data;
+  try{ data=JSON.parse($('sample-corpus').textContent); }catch(e){ toast('内置示例不可用'); return; }
+  let n=0;
+  data.forEach(f=>{
+    const units=f.units.map((u,i)=>({file:f.name,idx:i+1,zh:u.zh,en:u.en,zp:u.zp,ep:u.ep,ai:null,kind:'para'}));
+    addUnits(f.name,units,{name:f.name,origin:'sample',importedAt:Date.now(),localOnly:false}); n+=units.length;
+  });
+  renderFiles(); renderStats();
+  toast('已载入示例语料：2 个文件 / '+n+' 组对照');
+  if(!$('q').value){ $('q').value='定心丸'; runSearch(); }
+}
+
+async function init(){
+  loadCfg(); loadCorpus(); loadGloss(); loadFolders();
+  const fromIdb=await loadFromIDB();
+  if(fromIdb&&corpus.length){ renderStats(); renderFiles(); }
+  await restoreDir();
+  renderDirStat(); renderStats(); renderFiles(); renderGloss(); renderRecent(); fillCfg();
+  updateModeTag();
+  $('btnDir').addEventListener('click',async()=>{
+    const b=$('btnDir'); btxt(b,'等待选择',true);
+    try{ await pickDir(); renderDirStat(); toast('资料库已连接，之后导入与备份都会写入该文件夹'); }
+    catch(e){ const s=$('sizeStat'); if(s) s.textContent='未完成连接：'+e.message; }
+    btxt(b,'',false);
+  });
+  $('btnOpenDir').addEventListener('click',()=>{
+    const s=$('dirStat');
+    if(s.hidden){ renderDirStat(); s.hidden=false; $('btnOpenDir').textContent='收起路径'; }
+    else { s.hidden=true; $('btnOpenDir').textContent='显示本地路径'; }
+  });
+  $('btnNewFolder').addEventListener('click',newFolder);
+  $('btnBackup').addEventListener('click',oneKeyBackup);
+  $('btnCheckSize').addEventListener('click',async()=>{
+    const s=$('sizeStat');
+    if(s.hidden){ await checkLocalSize(); s.hidden=false; $('btnCheckSize').textContent='收起大小统计'; }
+    else { s.hidden=true; $('btnCheckSize').textContent='检查本地文件大小'; }
+  });
+  $('btnImpAll').addEventListener('click',()=>$('jsonfile').click());
+  $('btnClrZh').addEventListener('click',()=>{ $('zhSrc').value=''; toast('已清空中文框'); });
+  $('btnClrEn').addEventListener('click',()=>{ $('enSrc').value=''; toast('已清空英文框'); });
+  $('optAuto').addEventListener('change',()=>{
+    if($('optAuto').checked){
+      if(!confirm('本功能需调用API，每次使用需约0.02元，请合理使用')){
+        $('optAuto').checked=false; cfg.autoAI=false; S.set(K_CFG,JSON.stringify(cfg)); updateModeTag(); return;
+      }
+      cfg.autoAI=true;
+      if(!cfg.key) toast('已开启，但还没填 API Key；填好后才会真正联网');
+    }else{
+      cfg.autoAI=false;
+    }
+    S.set(K_CFG,JSON.stringify(cfg)); updateModeTag();
+  });
+  $('jsonfile').addEventListener('change',e=>{ if(e.target.files[0]) importAll(e.target.files[0]); e.target.value=''; });
+  Array.prototype.forEach.call(document.querySelectorAll('.nav button'),bn=>{
+    bn.addEventListener('click',()=>{
+      const t=$(bn.dataset.goto); if(!t) return;
+      t.scrollIntoView({behavior:'smooth',block:'start'});
+      if(bn.dataset.goto==='card-search') setTimeout(()=>{ const c=$('q'); if(c) c.focus(); },320);
+    });
+  });
+  runSearchSilent(); renderDbState();
+
+  $('drop').addEventListener('click',()=>$('file').click());
+  $('drop').addEventListener('keydown',e=>{ if(e.key==='Enter') $('file').click(); });
+
+  $('file').addEventListener('change',e=>{ if(e.target.files.length) ingestFiles(e.target.files); e.target.value=''; });
+  ['dragenter','dragover'].forEach(ev=>$('drop').addEventListener(ev,e=>{ e.preventDefault(); $('drop').classList.add('hot'); }));
+  ['dragleave','drop'].forEach(ev=>$('drop').addEventListener(ev,e=>{ e.preventDefault(); $('drop').classList.remove('hot'); }));
+  $('drop').addEventListener('drop',e=>{ if(e.dataTransfer.files.length) ingestFiles(e.dataTransfer.files); });
+  $('btnAlign').addEventListener('click',()=>doAlign(false));
+  $('btnFetch').addEventListener('click',doFetch);
+  $('btnWebHelp').addEventListener('click',()=>{
+    webHelpOn=!webHelpOn;
+    if(webHelpOn){
+      $('alStat').textContent='三种导入方式：① 浏览器打开中英页面，各自 Ctrl+S 另存为「网页，仅 HTML」，两个 .html 一起拖进本页——自动配对；② 分别把正文复制进上面两个框；③ 填两个网址点「抓取」，若被跨域拦截请在设置里填抓取代理。另存 HTML 最稳，且全程本机解析。';
+      $('btnWebHelp').textContent='收起说明';
+    }else{
+      $('alStat').textContent='';
+      $('btnWebHelp').textContent='网页抓取说明';
+    }
+  });
+  bindTaDrop('zhSrc'); bindTaDrop('enSrc');
+  $('btnVSave').addEventListener('click',()=>{ if(!lastVerdict){ toast('还没有可保存的结论'); return; } confirmAddGloss(lastTerms.join('、'),lastVerdict.best,(lastHits[0]?lastHits[0].u.file+' 第'+lastHits[0].u.idx+'组':''),'判定译法'); });
+  $('btnVCopy').addEventListener('click',copyEvidence);
+
+  $('btnSearch').addEventListener('click',runSearch);
+  $('q').addEventListener('keydown',e=>{ if(e.key==='Enter') runSearch(); });
+  $('btnAI').addEventListener('click',runAIAll);
+  $('btnCopyPrompt').addEventListener('click',copyPrompt);
+  $('btnParse').addEventListener('click',parseBack);
+  $('optAI').addEventListener('change',()=>{ if(lastHits.length){ renderSummary(lastHits,lastTerms); renderResults(lastHits,lastTerms); } });
+
+  $('btnSettings').addEventListener('click',()=>$('mask').classList.add('on'));
+  $('btnClose').addEventListener('click',()=>$('mask').classList.remove('on'));
+  $('mask').addEventListener('click',e=>{ if(e.target===$('mask')) $('mask').classList.remove('on'); });
+  $('btnSave').addEventListener('click',saveCfg);
+  $('btnTest').addEventListener('click',testCfg);
+  $('btnClrIdx').addEventListener('click',()=>{ S.del(K_CORPUS); idbSet('corpus',null); corpus=[]; renderFiles(); renderStats(); $('results').textContent=''; $('summary').hidden=true; $('candBox').hidden=true; $('mask').classList.remove('on'); toast('语料索引已清除'); });
+
+  $('btnTheme').addEventListener('click',()=>{
+    const next=document.documentElement.dataset.theme==='dark'?'light':'dark';
+    document.documentElement.dataset.theme=next; S.set('cn2en.theme',next);
+  });
+  const th=S.get('cn2en.theme'); if(th) document.documentElement.dataset.theme=th;
+  else if(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.dataset.theme='dark';
+
+  $('btnOpenGloss').addEventListener('click',openGlossary);
+  $('lAllow').addEventListener('click',()=>applyLocalChoice(false));
+  $('lLocal').addEventListener('click',()=>applyLocalChoice(true));
+  $('lClose').addEventListener('click',()=>applyLocalChoice(false));
+  $('lmask').addEventListener('click',e=>{ if(e.target===$('lmask')) applyLocalChoice(false); });
+  $('gmOk').addEventListener('click',()=>{
+    const zh=$('gmZh').value.trim(), en=$('gmEn').value.trim();
+    if(!zh||!en){ toast('中文和英文都要填'); return; }
+    addGloss(zh,en,$('gmSrc').value.trim()||(pendGloss&&pendGloss.src)||'',(pendGloss&&pendGloss.note)||'');
+    $('gmask').classList.remove('on'); pendGloss=null;
+  });
+  $('gmCancel').addEventListener('click',()=>{ $('gmask').classList.remove('on'); pendGloss=null; });
+  $('gmClose').addEventListener('click',()=>{ $('gmask').classList.remove('on'); pendGloss=null; });
+  $('gmask').addEventListener('click',e=>{ if(e.target===$('gmask')){ $('gmask').classList.remove('on'); pendGloss=null; } });
+  $('gmZh').addEventListener('keydown',e=>{ if(e.key==='Enter') $('gmEn').focus(); });
+  $('gmEn').addEventListener('keydown',e=>{ if(e.key==='Enter') $('gmOk').click(); });
+  $('btnClrRecent').addEventListener('click',()=>{ if(confirm('清空全部查询记录？')){ S.set(K_RECENT,'[]'); renderRecent(); toast('查询记录已清空'); } });
+  $('btnExp2').addEventListener('click',exportCSV);
+  $('gApply').addEventListener('click',()=>{
+    const raw=($('gPaste').value||'').trim();
+    if(!raw){ toast('先粘贴术语库 JSON'); return; }
+    let arr;
+    try{ arr=JSON.parse(raw); }catch(e){ toast('JSON 解析失败：'+e.message); return; }
+    if(!Array.isArray(arr)&&arr&&Array.isArray(arr.glossary)) arr=arr.glossary;
+    if(!Array.isArray(arr)){ toast('需要一个数组，或含 glossary 数组的对象'); return; }
+    if(applyGlossaryFrom(arr,'手动粘贴')){ $('gPaste').value=''; $('mask').classList.remove('on'); }
+  });
+  $('btnImp2').addEventListener('click',()=>$('csvfile2').click());
+  $('csvfile2').addEventListener('change',e=>{ if(e.target.files[0]) importCSV(e.target.files[0]); e.target.value=''; });
+
+  window.addEventListener('message',e=>{
+    if(!e||!e.data||e.data.type!=='cn2en-glossary') return;
+    applyGlossaryFrom(e.data.data,'新标签页');
+  });
+  try{
+    if(window.BroadcastChannel){
+      const bc=new BroadcastChannel('cn2en-gloss');
+      bc.onmessage=e=>{ if(e&&e.data&&e.data.type==='cn2en-glossary') applyGlossaryFrom(e.data.data,'广播通道'); };
+    }
+  }catch(e){}
+  window.addEventListener('storage',e=>{
+    if(!e||e.key!==K_GLOSS||!e.newValue) return;
+    try{ applyGlossaryFrom(JSON.parse(e.newValue),'存储事件'); }catch(err){}
+  });
+  window.addEventListener('focus',()=>{
+    try{
+      const raw=S.get(K_GLOSS);
+      if(!raw) return;
+      const arr=JSON.parse(raw);
+      if(!Array.isArray(arr)) return;
+      if(JSON.stringify(arr)!==JSON.stringify(glossary)){
+        glossary=arr; renderGloss(); renderStats();
+        if(lastTerms&&lastTerms.length) renderGlossHits(lastTerms);
+      }
+    }catch(e){}
+  });
+  document.addEventListener('paste',e=>{
+    if($('mask').classList.contains('on')||document.activeElement===$('q')||document.activeElement===$('pasteBack')) return;
+    const f=Array.from((e.clipboardData&&e.clipboardData.files)||[]); if(f.length) ingestFiles(f);
+  });
+  window.addEventListener('dragover',e=>e.preventDefault());
+  window.addEventListener('drop',e=>e.preventDefault());
+}
+function runSearchSilent(){ const v=$('q').value.trim(); if(v) runSearch(); }
+document.addEventListener('DOMContentLoaded',init);
+</script>
+</body>
+</html>
